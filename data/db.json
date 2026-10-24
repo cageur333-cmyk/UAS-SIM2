@@ -1,0 +1,672 @@
+{
+  "store_info": {
+    "name": "TB. SINAR ABADI MATERIAL",
+    "tagline": "Pusat Grosir & Eceran Bahan Bangunan Terlengkap",
+    "address": "Jl. Raya Industri No. 88, Kawasan Niaga Barat",
+    "phone": "0812-3456-7890 / (021) 555-8899",
+    "email": "info@sinarabadi-material.co.id"
+  },
+  "categories": [
+    {
+      "id": "CAT-1",
+      "name": "Semen & Perekat"
+    },
+    {
+      "id": "CAT-2",
+      "name": "Besi, Baja & Logam"
+    },
+    {
+      "id": "CAT-3",
+      "name": "Pasir, Batu & Agregat"
+    },
+    {
+      "id": "CAT-4",
+      "name": "Cat & Pelapis Tahan Air"
+    },
+    {
+      "id": "CAT-5",
+      "name": "Pipa PVC & Sambungan"
+    },
+    {
+      "id": "CAT-6",
+      "name": "Keramik & Sanitari"
+    },
+    {
+      "id": "CAT-7",
+      "name": "Kayu & Triplek"
+    }
+  ],
+  "suppliers": [
+    {
+      "id": "SUP-01",
+      "name": "PT Semen Nusantara Tbk",
+      "contact": "Budi Santoso",
+      "phone": "0811-987-111",
+      "address": "Kawasan Industri Cibinong"
+    },
+    {
+      "id": "SUP-02",
+      "name": "PT Baja Krakatau Prima",
+      "contact": "Hendra Wijaya",
+      "phone": "0812-444-222",
+      "address": "Cilegon, Banten"
+    },
+    {
+      "id": "SUP-03",
+      "name": "Depo Pasir Merapi Barokah",
+      "contact": "Haji Rohmad",
+      "phone": "0813-555-333",
+      "address": "Magelang / Muntilan"
+    },
+    {
+      "id": "SUP-04",
+      "name": "Distributor Cat Cahaya Indah",
+      "contact": "Linda Susanti",
+      "phone": "0817-666-444",
+      "address": "Jakarta Barat"
+    },
+    {
+      "id": "SUP-05",
+      "name": "PT Rucika Distribusi Utama",
+      "contact": "Denny Kurniawan",
+      "phone": "0818-777-555",
+      "address": "Tangerang Industri"
+    }
+  ],
+  "customers": [
+    {
+      "id": "CUST-01",
+      "name": "CV Mandiri Karya (Kontraktor)",
+      "type": "Kontraktor",
+      "phone": "0819-222-333",
+      "address": "Proyek Perumahan Griya Indah"
+    },
+    {
+      "id": "CUST-02",
+      "name": "PT Cipta Griya Lestari",
+      "type": "Toko Mitra",
+      "phone": "0812-888-999",
+      "address": "Jl. Pemuda No. 12"
+    },
+    {
+      "id": "CUST-03",
+      "name": "Bpk. H. Ahmad Fauzi",
+      "type": "Perorangan",
+      "phone": "0856-777-888",
+      "address": "Komplek Bukit Hijau Blok B-4"
+    },
+    {
+      "id": "CUST-04",
+      "name": "Pelanggan Umum (Walk-in)",
+      "type": "Umum",
+      "phone": "-",
+      "address": "Belanja Langsung Toko"
+    }
+  ],
+  "products": [
+    {
+      "id": "PRD-001",
+      "code": "SMN-TR-50",
+      "name": "Semen Tiga Roda Portland 50 Kg",
+      "category_id": "CAT-1",
+      "category_name": "Semen & Perekat",
+      "unit": "Sak",
+      "purchase_price": 64000,
+      "selling_price": 72000,
+      "stock": 348,
+      "min_stock": 50,
+      "location": "Gudang A-1",
+      "supplier_id": "SUP-01"
+    },
+    {
+      "id": "PRD-002",
+      "code": "SMN-GRS-40",
+      "name": "Semen Gresik Super 40 Kg",
+      "category_id": "CAT-1",
+      "category_name": "Semen & Perekat",
+      "unit": "Sak",
+      "purchase_price": 52000,
+      "selling_price": 59000,
+      "stock": 120,
+      "min_stock": 40,
+      "location": "Gudang A-2",
+      "supplier_id": "SUP-01"
+    },
+    {
+      "id": "PRD-003",
+      "code": "BSI-BT-10",
+      "name": "Besi Beton Polos 10mm x 12m SNI",
+      "category_id": "CAT-2",
+      "category_name": "Besi, Baja & Logam",
+      "unit": "Batang",
+      "purchase_price": 75000,
+      "selling_price": 88000,
+      "stock": 218,
+      "min_stock": 60,
+      "location": "Rak Baja 01",
+      "supplier_id": "SUP-02"
+    },
+    {
+      "id": "PRD-004",
+      "code": "BSI-BT-12",
+      "name": "Besi Beton Ulir 12mm x 12m SNI",
+      "category_id": "CAT-2",
+      "category_name": "Besi, Baja & Logam",
+      "unit": "Batang",
+      "purchase_price": 110000,
+      "selling_price": 128000,
+      "stock": 45,
+      "min_stock": 50,
+      "location": "Rak Baja 02",
+      "supplier_id": "SUP-02"
+    },
+    {
+      "id": "PRD-005",
+      "code": "PSR-MRP-TRK",
+      "name": "Pasir Merapi Cor Bersih (Truk 6m³)",
+      "category_id": "CAT-3",
+      "category_name": "Pasir, Batu & Agregat",
+      "unit": "Truk",
+      "purchase_price": 1250000,
+      "selling_price": 1550000,
+      "stock": 8,
+      "min_stock": 3,
+      "location": "Pelataran Belakang",
+      "supplier_id": "SUP-03"
+    },
+    {
+      "id": "PRD-006",
+      "code": "SPL-BT-PKP",
+      "name": "Batu Split Cor 1x2 (Colt Pick-Up)",
+      "category_id": "CAT-3",
+      "category_name": "Pasir, Batu & Agregat",
+      "unit": "Pick-up",
+      "purchase_price": 380000,
+      "selling_price": 490000,
+      "stock": 11,
+      "min_stock": 5,
+      "location": "Pelataran Depan",
+      "supplier_id": "SUP-03"
+    },
+    {
+      "id": "PRD-007",
+      "code": "CAT-DLX-20",
+      "name": "Cat Tembok Dulux Weathershield Putih 20L",
+      "category_id": "CAT-4",
+      "category_name": "Cat & Pelapis Tahan Air",
+      "unit": "Pail",
+      "purchase_price": 980000,
+      "selling_price": 1150000,
+      "stock": 18,
+      "min_stock": 5,
+      "location": "Display Rak C-1",
+      "supplier_id": "SUP-04"
+    },
+    {
+      "id": "PRD-008",
+      "code": "CAT-NPP-5K",
+      "name": "Cat Kayu & Besi Nippon Paint Hitam 5 Kg",
+      "category_id": "CAT-4",
+      "category_name": "Cat & Pelapis Tahan Air",
+      "unit": "Kaleng",
+      "purchase_price": 175000,
+      "selling_price": 215000,
+      "stock": 7,
+      "min_stock": 10,
+      "location": "Display Rak C-2",
+      "supplier_id": "SUP-04"
+    },
+    {
+      "id": "PRD-009",
+      "code": "PPA-RCK-3IN",
+      "name": "Pipa PVC Rucika D 3 Inch x 4m",
+      "category_id": "CAT-5",
+      "category_name": "Pipa PVC & Sambungan",
+      "unit": "Batang",
+      "purchase_price": 88000,
+      "selling_price": 106000,
+      "stock": 80,
+      "min_stock": 20,
+      "location": "Gudang Pipa B-1",
+      "supplier_id": "SUP-05"
+    },
+    {
+      "id": "PRD-010",
+      "code": "KRM-RMN-40",
+      "name": "Keramik Roman Granit 40x40 Putih Polos",
+      "category_id": "CAT-6",
+      "category_name": "Keramik & Sanitari",
+      "unit": "Dus",
+      "purchase_price": 68000,
+      "selling_price": 82000,
+      "stock": 140,
+      "min_stock": 30,
+      "location": "Gudang Keramik D",
+      "supplier_id": "SUP-04"
+    },
+    {
+      "id": "PRD-011",
+      "code": "TPLK-12MM",
+      "name": "Triplek Kayu Meranti Tebal 12mm",
+      "category_id": "CAT-7",
+      "category_name": "Kayu & Triplek",
+      "unit": "Lembar",
+      "purchase_price": 135000,
+      "selling_price": 160000,
+      "stock": 6,
+      "min_stock": 15,
+      "location": "Gudang Kayu E-1",
+      "supplier_id": "SUP-02"
+    }
+  ],
+  "sales": [
+    {
+      "id": "INV-202610-001",
+      "invoice_number": "INV/202610/0001",
+      "date": "2026-10-23T10:30:00Z",
+      "customer_id": "CUST-01",
+      "customer_name": "CV Mandiri Karya (Kontraktor)",
+      "payment_type": "Tempo/Kredit",
+      "due_date": "2026-11-23",
+      "subtotal": 10800000,
+      "discount": 200000,
+      "total": 10600000,
+      "hpp_total": 9240000,
+      "gross_profit": 1360000,
+      "paid_amount": 3000000,
+      "remaining_amount": 7600000,
+      "status": "Belum Lunas",
+      "items": [
+        {
+          "product_id": "PRD-001",
+          "product_name": "Semen Tiga Roda Portland 50 Kg",
+          "unit": "Sak",
+          "price": 72000,
+          "purchase_price": 64000,
+          "qty": 100,
+          "subtotal": 7200000
+        },
+        {
+          "product_id": "PRD-003",
+          "product_name": "Besi Beton Polos 10mm x 12m SNI",
+          "unit": "Batang",
+          "price": 88000,
+          "purchase_price": 75000,
+          "qty": 40,
+          "subtotal": 3520000
+        },
+        {
+          "product_id": "PRD-006",
+          "product_name": "Batu Split Cor 1x2 (Colt Pick-Up)",
+          "unit": "Pick-up",
+          "price": 490000,
+          "purchase_price": 380000,
+          "qty": 2,
+          "subtotal": 980000
+        }
+      ],
+      "notes": "Proyek tahap cor pondasi blok A"
+    },
+    {
+      "id": "INV-202610-002",
+      "invoice_number": "INV/202610/0002",
+      "date": "2026-10-24T08:45:00Z",
+      "customer_id": "CUST-04",
+      "customer_name": "Pelanggan Umum (Walk-in)",
+      "payment_type": "Tunai",
+      "due_date": null,
+      "subtotal": 1980000,
+      "discount": 0,
+      "total": 1980000,
+      "hpp_total": 1686000,
+      "gross_profit": 294000,
+      "paid_amount": 2000000,
+      "change_amount": 20000,
+      "remaining_amount": 0,
+      "status": "Lunas",
+      "items": [
+        {
+          "product_id": "PRD-001",
+          "product_name": "Semen Tiga Roda Portland 50 Kg",
+          "unit": "Sak",
+          "price": 72000,
+          "purchase_price": 64000,
+          "qty": 15,
+          "subtotal": 1080000
+        },
+        {
+          "product_id": "PRD-007",
+          "product_name": "Cat Tembok Dulux Weathershield Putih 20L",
+          "unit": "Pail",
+          "price": 1150000,
+          "purchase_price": 980000,
+          "qty": 1,
+          "subtotal": 1150000
+        }
+      ],
+      "notes": "Pembelian tunai kasir"
+    },
+    {
+      "id": "INV-954905193",
+      "invoice_number": "INV/202610/0003",
+      "date": "2026-10-24T09:25:54.905Z",
+      "customer_id": "CUST-04",
+      "customer_name": "Bpk. Bambang Sutrisno",
+      "payment_type": "Tunai",
+      "due_date": null,
+      "subtotal": 144000,
+      "discount": 0,
+      "total": 144000,
+      "hpp_total": 128000,
+      "gross_profit": 16000,
+      "paid_amount": 144000,
+      "change_amount": 56000,
+      "remaining_amount": 0,
+      "status": "Lunas",
+      "items": [
+        {
+          "product_id": "PRD-001",
+          "product_code": "SMN-TR-50",
+          "product_name": "Semen Tiga Roda Portland 50 Kg",
+          "unit": "Sak",
+          "price": 72000,
+          "purchase_price": 64000,
+          "qty": 2,
+          "subtotal": 144000
+        }
+      ],
+      "notes": "Pembelian 2 sak semen cash"
+    },
+    {
+      "id": "INV-406209883",
+      "invoice_number": "INV/202610/0004",
+      "date": "2026-10-24T09:33:26.209Z",
+      "customer_id": "CUST-04",
+      "customer_name": "Pelanggan Umum (Walk-in)",
+      "payment_type": "Tempo/Kredit",
+      "due_date": "2026-12-10",
+      "subtotal": 881000,
+      "discount": 0,
+      "total": 881000,
+      "hpp_total": 705000,
+      "gross_profit": 176000,
+      "paid_amount": 0,
+      "change_amount": 0,
+      "remaining_amount": 881000,
+      "status": "Belum Lunas",
+      "items": [
+        {
+          "product_id": "PRD-003",
+          "product_code": "BSI-BT-10",
+          "product_name": "Besi Beton Polos 10mm x 12m SNI",
+          "unit": "Batang",
+          "price": 88000,
+          "purchase_price": 75000,
+          "qty": 2,
+          "subtotal": 176000
+        },
+        {
+          "product_id": "PRD-006",
+          "product_code": "SPL-BT-PKP",
+          "product_name": "Batu Split Cor 1x2 (Colt Pick-Up)",
+          "unit": "Pick-up",
+          "price": 490000,
+          "purchase_price": 380000,
+          "qty": 1,
+          "subtotal": 490000
+        },
+        {
+          "product_id": "PRD-008",
+          "product_code": "CAT-NPP-5K",
+          "product_name": "Cat Kayu & Besi Nippon Paint Hitam 5 Kg",
+          "unit": "Kaleng",
+          "price": 215000,
+          "purchase_price": 175000,
+          "qty": 1,
+          "subtotal": 215000
+        }
+      ],
+      "notes": "pa prabowo"
+    }
+  ],
+  "purchases": [
+    {
+      "id": "PO-202610-001",
+      "po_number": "PO/202610/0001",
+      "date": "2026-10-20T09:00:00Z",
+      "supplier_id": "SUP-01",
+      "supplier_name": "PT Semen Nusantara Tbk",
+      "payment_type": "Tempo",
+      "due_date": "2026-11-20",
+      "total": 12800000,
+      "paid_amount": 5000000,
+      "remaining_amount": 7800000,
+      "status": "Belum Lunas",
+      "items": [
+        {
+          "product_id": "PRD-001",
+          "product_name": "Semen Tiga Roda Portland 50 Kg",
+          "unit": "Sak",
+          "purchase_price": 64000,
+          "qty": 200,
+          "subtotal": 12800000
+        }
+      ],
+      "notes": "Restock rutin semen 1 truk kontainer kecil"
+    }
+  ],
+  "stock_movements": [
+    {
+      "id": "SM-001",
+      "date": "2026-10-20T09:30:00Z",
+      "product_id": "PRD-001",
+      "product_name": "Semen Tiga Roda Portland 50 Kg",
+      "type": "IN",
+      "qty": 200,
+      "current_stock": 450,
+      "ref_type": "PURCHASE",
+      "ref_id": "PO/202610/0001",
+      "notes": "Penerimaan barang PO/202610/0001"
+    },
+    {
+      "id": "SM-002",
+      "date": "2026-10-23T10:35:00Z",
+      "product_id": "PRD-001",
+      "product_name": "Semen Tiga Roda Portland 50 Kg",
+      "type": "OUT",
+      "qty": 100,
+      "current_stock": 350,
+      "ref_type": "SALE",
+      "ref_id": "INV/202610/0001",
+      "notes": "Penjualan INV/202610/0001"
+    },
+    {
+      "id": "SM-003",
+      "date": "2026-10-23T10:35:00Z",
+      "product_id": "PRD-003",
+      "product_name": "Besi Beton Polos 10mm x 12m SNI",
+      "type": "OUT",
+      "qty": 40,
+      "current_stock": 220,
+      "ref_type": "SALE",
+      "ref_id": "INV/202610/0001",
+      "notes": "Penjualan INV/202610/0001"
+    },
+    {
+      "id": "SM-004",
+      "date": "2026-10-24T08:50:00Z",
+      "product_id": "PRD-001",
+      "product_name": "Semen Tiga Roda Portland 50 Kg",
+      "type": "OUT",
+      "qty": 15,
+      "current_stock": 350,
+      "ref_type": "SALE",
+      "ref_id": "INV/202610/0002",
+      "notes": "Penjualan INV/202610/0002"
+    },
+    {
+      "id": "SM-954905522",
+      "date": "2026-10-24T09:25:54.905Z",
+      "product_id": "PRD-001",
+      "product_name": "Semen Tiga Roda Portland 50 Kg",
+      "type": "OUT",
+      "qty": 2,
+      "current_stock": 348,
+      "ref_type": "SALE",
+      "ref_id": "INV/202610/0003",
+      "notes": "Penjualan INV/202610/0003 ke Bpk. Bambang Sutrisno"
+    },
+    {
+      "id": "SM-406209644",
+      "date": "2026-10-24T09:33:26.209Z",
+      "product_id": "PRD-003",
+      "product_name": "Besi Beton Polos 10mm x 12m SNI",
+      "type": "OUT",
+      "qty": 2,
+      "current_stock": 218,
+      "ref_type": "SALE",
+      "ref_id": "INV/202610/0004",
+      "notes": "Penjualan INV/202610/0004 ke Pelanggan Umum (Walk-in)"
+    },
+    {
+      "id": "SM-406209661",
+      "date": "2026-10-24T09:33:26.209Z",
+      "product_id": "PRD-006",
+      "product_name": "Batu Split Cor 1x2 (Colt Pick-Up)",
+      "type": "OUT",
+      "qty": 1,
+      "current_stock": 11,
+      "ref_type": "SALE",
+      "ref_id": "INV/202610/0004",
+      "notes": "Penjualan INV/202610/0004 ke Pelanggan Umum (Walk-in)"
+    },
+    {
+      "id": "SM-406209758",
+      "date": "2026-10-24T09:33:26.209Z",
+      "product_id": "PRD-008",
+      "product_name": "Cat Kayu & Besi Nippon Paint Hitam 5 Kg",
+      "type": "OUT",
+      "qty": 1,
+      "current_stock": 7,
+      "ref_type": "SALE",
+      "ref_id": "INV/202610/0004",
+      "notes": "Penjualan INV/202610/0004 ke Pelanggan Umum (Walk-in)"
+    }
+  ],
+  "receivables": [
+    {
+      "id": "AR-001",
+      "sale_id": "INV-202610-001",
+      "invoice_number": "INV/202610/0001",
+      "customer_id": "CUST-01",
+      "customer_name": "CV Mandiri Karya (Kontraktor)",
+      "total_amount": 10600000,
+      "paid_amount": 3000000,
+      "remaining_amount": 7600000,
+      "due_date": "2026-11-23",
+      "status": "Belum Lunas",
+      "payment_history": [
+        {
+          "date": "2026-10-23T10:30:00Z",
+          "amount": 3000000,
+          "note": "DP Pembelian awal"
+        }
+      ]
+    },
+    {
+      "id": "AR-406209395",
+      "sale_id": "INV-406209883",
+      "invoice_number": "INV/202610/0004",
+      "customer_id": "CUST-04",
+      "customer_name": "Pelanggan Umum (Walk-in)",
+      "total_amount": 881000,
+      "paid_amount": 0,
+      "remaining_amount": 881000,
+      "due_date": "2026-12-10",
+      "status": "Belum Lunas",
+      "payment_history": []
+    }
+  ],
+  "payables": [
+    {
+      "id": "AP-001",
+      "purchase_id": "PO-202610-001",
+      "po_number": "PO/202610/0001",
+      "supplier_id": "SUP-01",
+      "supplier_name": "PT Semen Nusantara Tbk",
+      "total_amount": 12800000,
+      "paid_amount": 5000000,
+      "remaining_amount": 7800000,
+      "due_date": "2026-11-20",
+      "status": "Belum Lunas",
+      "payment_history": [
+        {
+          "date": "2026-10-20T09:00:00Z",
+          "amount": 5000000,
+          "note": "DP Pengiriman Semen"
+        }
+      ]
+    }
+  ],
+  "cash_transactions": [
+    {
+      "id": "CSH-001",
+      "date": "2026-10-20T09:00:00Z",
+      "type": "OUT",
+      "category": "Pembayaran Hutang / DP PO",
+      "amount": 5000000,
+      "ref_id": "PO/202610/0001",
+      "description": "DP Pembelian Semen ke PT Semen Nusantara Tbk",
+      "balance_after": 45000000
+    },
+    {
+      "id": "CSH-002",
+      "date": "2026-10-23T10:30:00Z",
+      "type": "IN",
+      "category": "Penjualan (DP Piutang)",
+      "amount": 3000000,
+      "ref_id": "INV/202610/0001",
+      "description": "DP Penjualan dari CV Mandiri Karya",
+      "balance_after": 48000000
+    },
+    {
+      "id": "CSH-003",
+      "date": "2026-10-24T08:45:00Z",
+      "type": "IN",
+      "category": "Penjualan Tunai POS",
+      "amount": 1980000,
+      "ref_id": "INV/202610/0002",
+      "description": "Penjualan tunai kasir toko walk-in",
+      "balance_after": 49980000
+    },
+    {
+      "id": "CSH-004",
+      "date": "2026-10-24T11:00:00Z",
+      "type": "OUT",
+      "category": "Biaya Operasional",
+      "amount": 450000,
+      "ref_id": "EXP-OP-01",
+      "description": "Bensin solar truk armada pengiriman material & konsumsi kuli bongkar",
+      "balance_after": 49530000
+    },
+    {
+      "id": "CSH-954905843",
+      "date": "2026-10-24T09:25:54.905Z",
+      "type": "IN",
+      "category": "Penjualan Tunai POS",
+      "amount": 144000,
+      "ref_id": "INV/202610/0003",
+      "description": "Penjualan tunai INV/202610/0003 (Bpk. Bambang Sutrisno)",
+      "balance_after": 49674000
+    }
+  ],
+  "operating_expenses": [
+    {
+      "id": "EXP-OP-01",
+      "date": "2026-10-24T11:00:00Z",
+      "category": "Operasional Armada & Bongkar Muat",
+      "amount": 450000,
+      "description": "Bensin solar truk armada pengiriman material & konsumsi kuli bongkar"
+    }
+  ]
+}
