@@ -894,10 +894,15 @@ app.post('/api/reset', (req, res) => {
 });
 
 // Start Server
-app.listen(PORT, () => {
-  console.log(`====================================================`);
-  console.log(`   ERP TOKO BANGUNAN & GROSIR (TB SINAR ABADI)     `);
-  console.log(`   Server aktif di: http://localhost:${PORT}        `);
-  console.log(`   Metode Waterfall - Tugas UAS Rekayasa Perangkat  `);
-  console.log(`====================================================`);
-});
+if (process.env.NODE_ENV !== 'test' && !process.env.VERCEL) {
+  app.listen(PORT, () => {
+    console.log(`====================================================`);
+    console.log(`   ERP TOKO BANGUNAN & GROSIR (TB SINAR ABADI)     `);
+    console.log(`   Server aktif di: http://localhost:${PORT}        `);
+    console.log(`   Metode Waterfall - Tugas UAS Rekayasa Perangkat  `);
+    console.log(`====================================================`);
+  });
+}
+
+module.exports = app;
+
