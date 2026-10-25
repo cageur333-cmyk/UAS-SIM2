@@ -2,5 +2,4 @@ node_modules/
 cloudflared.exe
 .env
 *.log
-*.bat
 .DS_Store

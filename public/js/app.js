@@ -60,48 +60,703 @@ function showToast(message, type = 'success') {
   }, 3500);
 }
 
-// ================= API CALLS ================= //
+// ================= CLIENT-SIDE LOCAL DB ENGINE (FOR GITHUB PAGES) ================= //
+const isGitHubPages = window.location.hostname.includes('github.io') || window.location.protocol === 'file:';
+
+const INITIAL_CLIENT_DATA = {
+  store_info: {
+    name: "TB. SINAR ABADI MATERIAL",
+    tagline: "Pusat Grosir & Eceran Bahan Bangunan Terlengkap",
+    address: "Jl. Raya Industri No. 88, Kawasan Niaga Barat",
+    phone: "0812-3456-7890 / (021) 555-8899",
+    email: "info@sinarabadi-material.co.id"
+  },
+  categories: [
+    { id: "CAT-1", name: "Semen & Perekat" },
+    { id: "CAT-2", name: "Besi, Baja & Logam" },
+    { id: "CAT-3", name: "Pasir, Batu & Agregat" },
+    { id: "CAT-4", name: "Cat & Pelapis Tahan Air" },
+    { id: "CAT-5", name: "Pipa PVC & Sambungan" },
+    { id: "CAT-6", name: "Keramik & Sanitari" },
+    { id: "CAT-7", name: "Kayu & Triplek" }
+  ],
+  suppliers: [
+    { id: "SUP-01", name: "PT Semen Nusantara Tbk", contact: "Budi Santoso", phone: "0811-987-111", address: "Kawasan Industri Cibinong" },
+    { id: "SUP-02", name: "PT Baja Krakatau Prima", contact: "Hendra Wijaya", phone: "0812-444-222", address: "Cilegon, Banten" },
+    { id: "SUP-03", name: "Depo Pasir Merapi Barokah", contact: "Haji Rohmad", phone: "0813-555-333", address: "Magelang / Muntilan" },
+    { id: "SUP-04", name: "Distributor Cat Cahaya Indah", contact: "Linda Susanti", phone: "0817-666-444", address: "Jakarta Barat" },
+    { id: "SUP-05", name: "PT Rucika Distribusi Utama", contact: "Denny Kurniawan", phone: "0818-777-555", address: "Tangerang Industri" }
+  ],
+  customers: [
+    { id: "CUST-01", name: "CV Mandiri Karya (Kontraktor)", type: "Kontraktor", phone: "0819-222-333", address: "Proyek Perumahan Griya Indah" },
+    { id: "CUST-02", name: "PT Cipta Griya Lestari", type: "Toko Mitra", phone: "0812-888-999", address: "Jl. Pemuda No. 12" },
+    { id: "CUST-03", name: "Bpk. H. Ahmad Fauzi", type: "Perorangan", phone: "0856-777-888", address: "Komplek Bukit Hijau Blok B-4" },
+    { id: "CUST-04", name: "Pelanggan Umum (Walk-in)", type: "Umum", phone: "-", address: "Belanja Langsung Toko" }
+  ],
+  products: [
+    { id: "PRD-001", code: "SMN-TR-50", name: "Semen Tiga Roda Portland 50 Kg", category_id: "CAT-1", category_name: "Semen & Perekat", unit: "Sak", purchase_price: 64000, selling_price: 72000, stock: 350, min_stock: 50, location: "Gudang A-1", supplier_id: "SUP-01" },
+    { id: "PRD-002", code: "SMN-GRS-40", name: "Semen Gresik Super 40 Kg", category_id: "CAT-1", category_name: "Semen & Perekat", unit: "Sak", purchase_price: 52000, selling_price: 59000, stock: 120, min_stock: 40, location: "Gudang A-2", supplier_id: "SUP-01" },
+    { id: "PRD-003", code: "BSI-BT-10", name: "Besi Beton Polos 10mm x 12m SNI", category_id: "CAT-2", category_name: "Besi, Baja & Logam", unit: "Batang", purchase_price: 75000, selling_price: 88000, stock: 220, min_stock: 60, location: "Rak Baja 01", supplier_id: "SUP-02" },
+    { id: "PRD-004", code: "BSI-BT-12", name: "Besi Beton Ulir 12mm x 12m SNI", category_id: "CAT-2", category_name: "Besi, Baja & Logam", unit: "Batang", purchase_price: 110000, selling_price: 128000, stock: 45, min_stock: 50, location: "Rak Baja 02", supplier_id: "SUP-02" },
+    { id: "PRD-005", code: "PSR-MRP-TRK", name: "Pasir Merapi Cor Bersih (Truk 6m³)", category_id: "CAT-3", category_name: "Pasir, Batu & Agregat", unit: "Truk", purchase_price: 1250000, selling_price: 1550000, stock: 8, min_stock: 3, location: "Pelataran Belakang", supplier_id: "SUP-03" },
+    { id: "PRD-006", code: "SPL-BT-PKP", name: "Batu Split Cor 1x2 (Colt Pick-Up)", category_id: "CAT-3", category_name: "Pasir, Batu & Agregat", unit: "Pick-up", purchase_price: 380000, selling_price: 490000, stock: 12, min_stock: 5, location: "Pelataran Depan", supplier_id: "SUP-03" },
+    { id: "PRD-007", code: "CAT-DLX-20", name: "Cat Tembok Dulux Weathershield Putih 20L", category_id: "CAT-4", category_name: "Cat & Pelapis Tahan Air", unit: "Pail", purchase_price: 980000, selling_price: 1150000, stock: 18, min_stock: 5, location: "Display Rak C-1", supplier_id: "SUP-04" },
+    { id: "PRD-008", code: "CAT-NPP-5K", name: "Cat Kayu & Besi Nippon Paint Hitam 5 Kg", category_id: "CAT-4", category_name: "Cat & Pelapis Tahan Air", unit: "Kaleng", purchase_price: 175000, selling_price: 215000, stock: 8, min_stock: 10, location: "Display Rak C-2", supplier_id: "SUP-04" },
+    { id: "PRD-009", code: "PPA-RCK-3IN", name: "Pipa PVC Rucika D 3 Inch x 4m", category_id: "CAT-5", category_name: "Pipa PVC & Sambungan", unit: "Batang", purchase_price: 88000, selling_price: 106000, stock: 80, min_stock: 20, location: "Gudang Pipa B-1", supplier_id: "SUP-05" },
+    { id: "PRD-010", code: "KRM-RMN-40", name: "Keramik Roman Granit 40x40 Putih Polos", category_id: "CAT-6", category_name: "Keramik & Sanitari", unit: "Dus", purchase_price: 68000, selling_price: 82000, stock: 140, min_stock: 30, location: "Gudang Keramik D", supplier_id: "SUP-04" },
+    { id: "PRD-011", code: "TPLK-12MM", name: "Triplek Kayu Meranti Tebal 12mm", category_id: "CAT-7", category_name: "Kayu & Triplek", unit: "Lembar", purchase_price: 135000, selling_price: 160000, stock: 6, min_stock: 15, location: "Gudang Kayu E-1", supplier_id: "SUP-02" }
+  ],
+  sales: [
+    {
+      id: "INV-202610-001",
+      invoice_number: "INV/202610/0001",
+      date: "2026-10-23T10:30:00Z",
+      customer_id: "CUST-01",
+      customer_name: "CV Mandiri Karya (Kontraktor)",
+      payment_type: "Tempo/Kredit",
+      due_date: "2026-11-23",
+      subtotal: 10800000,
+      discount: 200000,
+      total: 10600000,
+      hpp_total: 9240000,
+      gross_profit: 1360000,
+      paid_amount: 3000000,
+      remaining_amount: 7600000,
+      status: "Belum Lunas",
+      items: [
+        { product_id: "PRD-001", product_name: "Semen Tiga Roda Portland 50 Kg", unit: "Sak", price: 72000, purchase_price: 64000, qty: 100, subtotal: 7200000 },
+        { product_id: "PRD-003", product_name: "Besi Beton Polos 10mm x 12m SNI", unit: "Batang", price: 88000, purchase_price: 75000, qty: 40, subtotal: 3520000 },
+        { product_id: "PRD-006", product_name: "Batu Split Cor 1x2 (Colt Pick-Up)", unit: "Pick-up", price: 490000, purchase_price: 380000, qty: 2, subtotal: 980000 }
+      ],
+      notes: "Proyek tahap cor pondasi blok A"
+    },
+    {
+      id: "INV-202610-002",
+      invoice_number: "INV/202610/0002",
+      date: "2026-10-24T08:45:00Z",
+      customer_id: "CUST-04",
+      customer_name: "Pelanggan Umum (Walk-in)",
+      payment_type: "Tunai",
+      due_date: null,
+      subtotal: 1980000,
+      discount: 0,
+      total: 1980000,
+      hpp_total: 1686000,
+      gross_profit: 294000,
+      paid_amount: 2000000,
+      change_amount: 20000,
+      remaining_amount: 0,
+      status: "Lunas",
+      items: [
+        { product_id: "PRD-001", product_name: "Semen Tiga Roda Portland 50 Kg", unit: "Sak", price: 72000, purchase_price: 64000, qty: 15, subtotal: 1080000 },
+        { product_id: "PRD-007", product_name: "Cat Tembok Dulux Weathershield Putih 20L", unit: "Pail", price: 1150000, purchase_price: 980000, qty: 1, subtotal: 1150000 }
+      ],
+      notes: "Pembelian tunai kasir"
+    }
+  ],
+  purchases: [
+    {
+      id: "PO-202610-001",
+      po_number: "PO/202610/0001",
+      date: "2026-10-20T09:00:00Z",
+      supplier_id: "SUP-01",
+      supplier_name: "PT Semen Nusantara Tbk",
+      payment_type: "Tempo",
+      due_date: "2026-11-20",
+      total: 12800000,
+      paid_amount: 5000000,
+      remaining_amount: 7800000,
+      status: "Belum Lunas",
+      items: [
+        { product_id: "PRD-001", product_name: "Semen Tiga Roda Portland 50 Kg", unit: "Sak", purchase_price: 64000, qty: 200, subtotal: 12800000 }
+      ],
+      notes: "Restock rutin semen 1 truk kontainer kecil"
+    }
+  ],
+  stock_movements: [
+    { id: "SM-001", date: "2026-10-20T09:30:00Z", product_id: "PRD-001", product_name: "Semen Tiga Roda Portland 50 Kg", type: "IN", qty: 200, current_stock: 450, ref_type: "PURCHASE", ref_id: "PO/202610/0001", notes: "Penerimaan restock" },
+    { id: "SM-002", date: "2026-10-23T10:35:00Z", product_id: "PRD-001", product_name: "Semen Tiga Roda Portland 50 Kg", type: "OUT", qty: 100, current_stock: 350, ref_type: "SALE", ref_id: "INV/202610/0001", notes: "Penjualan INV/202610/0001" },
+    { id: "SM-003", date: "2026-10-23T10:35:00Z", product_id: "PRD-003", product_name: "Besi Beton Polos 10mm x 12m SNI", type: "OUT", qty: 40, current_stock: 220, ref_type: "SALE", ref_id: "INV/202610/0001", notes: "Penjualan INV/202610/0001" },
+    { id: "SM-004", date: "2026-10-24T08:50:00Z", product_id: "PRD-001", product_name: "Semen Tiga Roda Portland 50 Kg", type: "OUT", qty: 15, current_stock: 350, ref_type: "SALE", ref_id: "INV/202610/0002", notes: "Penjualan INV/202610/0002" }
+  ],
+  receivables: [
+    {
+      id: "AR-001",
+      sale_id: "INV-202610-001",
+      invoice_number: "INV/202610/0001",
+      customer_id: "CUST-01",
+      customer_name: "CV Mandiri Karya (Kontraktor)",
+      total_amount: 10600000,
+      paid_amount: 3000000,
+      remaining_amount: 7600000,
+      due_date: "2026-11-23",
+      status: "Belum Lunas",
+      payment_history: [{ date: "2026-10-23T10:30:00Z", amount: 3000000, note: "DP Pembelian awal" }]
+    }
+  ],
+  payables: [
+    {
+      id: "AP-001",
+      purchase_id: "PO-202610-001",
+      po_number: "PO/202610/0001",
+      supplier_id: "SUP-01",
+      supplier_name: "PT Semen Nusantara Tbk",
+      total_amount: 12800000,
+      paid_amount: 5000000,
+      remaining_amount: 7800000,
+      due_date: "2026-11-20",
+      status: "Belum Lunas",
+      payment_history: [{ date: "2026-10-20T09:00:00Z", amount: 5000000, note: "DP Pengiriman Semen" }]
+    }
+  ],
+  cash_transactions: [
+    { id: "CSH-001", date: "2026-10-20T09:00:00Z", type: "OUT", category: "Pembayaran Hutang / DP PO", amount: 5000000, ref_id: "PO/202610/0001", description: "DP Pembelian Semen", balance_after: 45000000 },
+    { id: "CSH-002", date: "2026-10-23T10:30:00Z", type: "IN", category: "Penjualan (DP Piutang)", amount: 3000000, ref_id: "INV/202610/0001", description: "DP Penjualan dari CV Mandiri Karya", balance_after: 48000000 },
+    { id: "CSH-003", date: "2026-10-24T08:45:00Z", type: "IN", category: "Penjualan Tunai POS", amount: 1980000, ref_id: "INV/202610/0002", description: "Penjualan tunai kasir toko walk-in", balance_after: 49980000 },
+    { id: "CSH-004", date: "2026-10-24T11:00:00Z", type: "OUT", category: "Biaya Operasional", amount: 450000, ref_id: "EXP-OP-01", description: "Bensin solar truk armada & konsumsi kuli bongkar", balance_after: 49530000 }
+  ],
+  operating_expenses: [
+    { id: "EXP-OP-01", date: "2026-10-24T11:00:00Z", category: "Operasional Armada & Bongkar Muat", amount: 450000, description: "Bensin solar truk armada & konsumsi kuli bongkar" }
+  ]
+};
+
+function getClientDb() {
+  const raw = localStorage.getItem('buildpro_erp_db');
+  if (!raw) {
+    localStorage.setItem('buildpro_erp_db', JSON.stringify(INITIAL_CLIENT_DATA));
+    return JSON.parse(JSON.stringify(INITIAL_CLIENT_DATA));
+  }
+  try {
+    return JSON.parse(raw);
+  } catch (e) {
+    return JSON.parse(JSON.stringify(INITIAL_CLIENT_DATA));
+  }
+}
+
+function saveClientDb(db) {
+  localStorage.setItem('buildpro_erp_db', JSON.stringify(db));
+}
+
+function clientCalculateCash(db) {
+  const initialCash = 50000000;
+  return db.cash_transactions.reduce((acc, curr) => {
+    return curr.type === 'IN' ? acc + Number(curr.amount) : acc - Number(curr.amount);
+  }, initialCash);
+}
+
+function clientDbHandler(endpoint, method = 'GET', body = null) {
+  const db = getClientDb();
+  const url = new URL(endpoint, 'http://localhost');
+  const path = url.pathname;
+  const params = url.searchParams;
+
+  // 1. Dashboard
+  if (path === '/dashboard') {
+    const today = new Date().toISOString().slice(0, 10);
+    let totalStockAsset = 0;
+    let criticalStockCount = 0;
+    const criticalProducts = [];
+
+    db.products.forEach(p => {
+      totalStockAsset += Number(p.stock) * Number(p.purchase_price);
+      if (Number(p.stock) <= Number(p.min_stock)) {
+        criticalStockCount++;
+        criticalProducts.push({ id: p.id, code: p.code, name: p.name, unit: p.unit, stock: p.stock, min_stock: p.min_stock });
+      }
+    });
+
+    let todaySales = 0;
+    let totalSalesVolume = 0;
+    let totalHpp = 0;
+    db.sales.forEach(s => {
+      totalSalesVolume += Number(s.total);
+      totalHpp += Number(s.hpp_total || 0);
+      if (new Date(s.date).toISOString().slice(0, 10) === today) {
+        todaySales += Number(s.total);
+      }
+    });
+
+    const grossProfit = totalSalesVolume - totalHpp;
+    const totalOperatingExpenses = (db.operating_expenses || []).reduce((a, c) => a + Number(c.amount), 0);
+    const netProfit = grossProfit - totalOperatingExpenses;
+    const totalReceivables = db.receivables.filter(r => r.status !== 'Lunas').reduce((a, c) => a + Number(c.remaining_amount), 0);
+    const totalPayables = db.payables.filter(p => p.status !== 'Lunas').reduce((a, c) => a + Number(c.remaining_amount), 0);
+    const currentCashBalance = clientCalculateCash(db);
+
+    const recentSales = db.sales.slice(-7).map(s => ({
+      invoice: s.invoice_number,
+      date: new Date(s.date).toLocaleDateString('id-ID', { day: '2-digit', month: 'short' }),
+      total: s.total,
+      customer: s.customer_name
+    }));
+
+    return {
+      success: true,
+      data: {
+        store_info: db.store_info,
+        totalStockAsset,
+        criticalStockCount,
+        criticalProducts,
+        todaySales,
+        totalSalesVolume,
+        grossProfit,
+        totalOperatingExpenses,
+        netProfit,
+        totalReceivables,
+        totalPayables,
+        currentCashBalance,
+        recentSales,
+        totalProductsCount: db.products.length,
+        totalTransactionsCount: db.sales.length + db.purchases.length
+      }
+    };
+  }
+
+  // 2. Inventory
+  if (path === '/inventory' && method === 'GET') {
+    const search = (params.get('search') || '').toLowerCase();
+    const category = params.get('category');
+    const status = params.get('status');
+
+    let list = db.products.map(p => {
+      let stockStatus = 'Aman';
+      let statusClass = 'success';
+      if (p.stock <= 0) { stockStatus = 'Habis'; statusClass = 'danger'; }
+      else if (p.stock <= p.min_stock) { stockStatus = 'Menipis'; statusClass = 'warning'; }
+      return { ...p, stockStatus, statusClass, assetValue: p.stock * p.purchase_price };
+    });
+
+    if (search) list = list.filter(p => p.name.toLowerCase().includes(search) || p.code.toLowerCase().includes(search));
+    if (category && category !== 'ALL') list = list.filter(p => p.category_id === category);
+    if (status === 'low') list = list.filter(p => p.stock <= p.min_stock);
+
+    return { success: true, data: list, categories: db.categories, suppliers: db.suppliers };
+  }
+
+  // 3. Post Inventory
+  if (path === '/inventory' && method === 'POST') {
+    const newProduct = {
+      id: 'PRD-' + Date.now().toString().slice(-6),
+      code: body.code.toUpperCase().trim(),
+      name: body.name.trim(),
+      category_id: body.category_id || "CAT-1",
+      category_name: (db.categories.find(c => c.id === body.category_id) || {}).name || "Umum",
+      unit: body.unit.trim(),
+      purchase_price: Number(body.purchase_price),
+      selling_price: Number(body.selling_price),
+      stock: Number(body.stock || 0),
+      min_stock: Number(body.min_stock || 10),
+      location: body.location || "Gudang Utama",
+      supplier_id: body.supplier_id || ""
+    };
+    db.products.push(newProduct);
+    saveClientDb(db);
+    return { success: true, message: "Barang berhasil ditambahkan (LocalStorage)!", data: newProduct };
+  }
+
+  // 4. Update Inventory
+  if (path.startsWith('/inventory/') && method === 'PUT') {
+    const id = path.split('/')[2];
+    const idx = db.products.findIndex(p => p.id === id);
+    if (idx !== -1) {
+      db.products[idx] = { ...db.products[idx], ...body };
+      saveClientDb(db);
+      return { success: true, message: "Data barang diperbarui!", data: db.products[idx] };
+    }
+  }
+
+  // 5. Opname
+  if (path.includes('/opname') && method === 'POST') {
+    const id = path.split('/')[2];
+    const prod = db.products.find(p => p.id === id);
+    if (prod) {
+      const prev = prod.stock;
+      prod.stock = Number(body.actual_stock);
+      db.stock_movements.push({
+        id: 'SM-' + Date.now().toString().slice(-6),
+        date: new Date().toISOString(),
+        product_id: prod.id,
+        product_name: prod.name,
+        type: (prod.stock >= prev) ? 'ADJUST_IN' : 'ADJUST_OUT',
+        qty: Math.abs(prod.stock - prev),
+        current_stock: prod.stock,
+        ref_type: 'OPNAME',
+        ref_id: 'OPNAME-' + prod.id,
+        notes: body.notes || 'Stock opname fisik'
+      });
+      saveClientDb(db);
+      return { success: true, message: "Penyesuaian stok opname disimpan!" };
+    }
+  }
+
+  // 6. Movements
+  if (path === '/inventory/movements') {
+    const pid = params.get('product_id');
+    let m = [...db.stock_movements].reverse();
+    if (pid) m = m.filter(item => item.product_id === pid);
+    return { success: true, data: m };
+  }
+
+  // 7. Sales GET
+  if (path === '/sales' && method === 'GET') {
+    return { success: true, data: [...db.sales].reverse() };
+  }
+
+  // 8. Sales POST
+  if (path === '/sales' && method === 'POST') {
+    const { customer_id, customer_name, payment_type, due_date, discount, paid_amount, items, notes } = body;
+    let subtotal = 0;
+    let hpp_total = 0;
+
+    const finalItems = items.map(item => {
+      const prod = db.products.find(p => p.id === item.product_id);
+      const st = Number(item.qty) * Number(item.price);
+      subtotal += st;
+      hpp_total += Number(item.qty) * Number(prod.purchase_price);
+      return { ...item, subtotal: st, purchase_price: prod.purchase_price, product_name: prod.name, unit: prod.unit };
+    });
+
+    const disc = Number(discount || 0);
+    const grandTotal = Math.max(0, subtotal - disc);
+    const gross_profit = grandTotal - hpp_total;
+    const invCount = db.sales.length + 1;
+    const invoice_number = `INV/${new Date().getFullYear()}${String(new Date().getMonth() + 1).padStart(2, '0')}/${String(invCount).padStart(4, '0')}`;
+    const paid = Number(paid_amount || 0);
+    const remaining = payment_type === 'Tempo/Kredit' ? Math.max(0, grandTotal - paid) : 0;
+    const status = (payment_type === 'Tunai' || remaining === 0) ? 'Lunas' : 'Belum Lunas';
+    const change = payment_type === 'Tunai' ? Math.max(0, paid - grandTotal) : 0;
+
+    const saleRecord = {
+      id: 'INV-' + Date.now().toString().slice(-6),
+      invoice_number,
+      date: new Date().toISOString(),
+      customer_id: customer_id || "CUST-04",
+      customer_name: customer_name || "Pelanggan Umum",
+      payment_type: payment_type || "Tunai",
+      due_date: payment_type === 'Tempo/Kredit' ? (due_date || new Date(Date.now() + 30 * 86400000).toISOString().slice(0, 10)) : null,
+      subtotal,
+      discount: disc,
+      total: grandTotal,
+      hpp_total,
+      gross_profit,
+      paid_amount: payment_type === 'Tunai' ? grandTotal : paid,
+      change_amount: change,
+      remaining_amount: remaining,
+      status,
+      items: finalItems,
+      notes: notes || ""
+    };
+
+    // Deduct stock
+    finalItems.forEach(i => {
+      const p = db.products.find(pr => pr.id === i.product_id);
+      if (p) {
+        p.stock -= i.qty;
+        db.stock_movements.push({
+          id: 'SM-' + Date.now().toString().slice(-6),
+          date: new Date().toISOString(),
+          product_id: p.id,
+          product_name: p.name,
+          type: 'OUT',
+          qty: i.qty,
+          current_stock: p.stock,
+          ref_type: 'SALE',
+          ref_id: invoice_number,
+          notes: `Penjualan ${invoice_number} ke ${saleRecord.customer_name}`
+        });
+      }
+    });
+
+    const bal = clientCalculateCash(db);
+    if (payment_type === 'Tunai') {
+      db.cash_transactions.push({
+        id: 'CSH-' + Date.now().toString().slice(-6),
+        date: new Date().toISOString(),
+        type: 'IN',
+        category: 'Penjualan Tunai POS',
+        amount: grandTotal,
+        ref_id: invoice_number,
+        description: `Penjualan tunai ${invoice_number} (${saleRecord.customer_name})`,
+        balance_after: bal + grandTotal
+      });
+    } else {
+      db.receivables.push({
+        id: 'AR-' + Date.now().toString().slice(-6),
+        sale_id: saleRecord.id,
+        invoice_number,
+        customer_id: saleRecord.customer_id,
+        customer_name: saleRecord.customer_name,
+        total_amount: grandTotal,
+        paid_amount: paid,
+        remaining_amount: remaining,
+        due_date: saleRecord.due_date,
+        status,
+        payment_history: paid > 0 ? [{ date: new Date().toISOString(), amount: paid, note: "DP Penjualan" }] : []
+      });
+      if (paid > 0) {
+        db.cash_transactions.push({
+          id: 'CSH-' + Date.now().toString().slice(-6),
+          date: new Date().toISOString(),
+          type: 'IN',
+          category: 'Penjualan (DP Piutang)',
+          amount: paid,
+          ref_id: invoice_number,
+          description: `DP ${invoice_number} dari ${saleRecord.customer_name}`,
+          balance_after: bal + paid
+        });
+      }
+    }
+
+    db.sales.push(saleRecord);
+    saveClientDb(db);
+    return { success: true, message: "Penjualan berhasil dicatat!", data: saleRecord };
+  }
+
+  // 9. Purchases
+  if (path === '/purchases' && method === 'GET') {
+    return { success: true, data: [...db.purchases].reverse() };
+  }
+
+  if (path === '/purchases' && method === 'POST') {
+    const { supplier_id, payment_type, due_date, paid_amount, items, notes } = body;
+    const sup = db.suppliers.find(s => s.id === supplier_id);
+    const supName = sup ? sup.name : "Supplier";
+    let total = 0;
+    const finalItems = items.map(item => {
+      const p = db.products.find(pr => pr.id === item.product_id);
+      const st = Number(item.qty) * Number(item.purchase_price);
+      total += st;
+      return { ...item, subtotal: st, product_name: p.name, unit: p.unit };
+    });
+
+    const poCount = db.purchases.length + 1;
+    const po_number = `PO/${new Date().getFullYear()}${String(new Date().getMonth() + 1).padStart(2, '0')}/${String(poCount).padStart(4, '0')}`;
+    const paid = Number(paid_amount || 0);
+    const remaining = payment_type === 'Tempo' ? Math.max(0, total - paid) : 0;
+    const status = (payment_type === 'Tunai' || remaining === 0) ? 'Lunas' : 'Belum Lunas';
+
+    const purchaseRecord = {
+      id: 'PO-' + Date.now().toString().slice(-6),
+      po_number,
+      date: new Date().toISOString(),
+      supplier_id,
+      supplier_name: supName,
+      payment_type: payment_type || "Tunai",
+      due_date: payment_type === 'Tempo' ? due_date : null,
+      total,
+      paid_amount: payment_type === 'Tunai' ? total : paid,
+      remaining_amount: remaining,
+      status,
+      items: finalItems,
+      notes: notes || ""
+    };
+
+    finalItems.forEach(i => {
+      const p = db.products.find(pr => pr.id === i.product_id);
+      if (p) {
+        p.stock += i.qty;
+        p.purchase_price = i.purchase_price;
+        db.stock_movements.push({
+          id: 'SM-' + Date.now().toString().slice(-6),
+          date: new Date().toISOString(),
+          product_id: p.id,
+          product_name: p.name,
+          type: 'IN',
+          qty: i.qty,
+          current_stock: p.stock,
+          ref_type: 'PURCHASE',
+          ref_id: po_number,
+          notes: `Restock PO ${po_number}`
+        });
+      }
+    });
+
+    const bal = clientCalculateCash(db);
+    if (payment_type === 'Tunai') {
+      db.cash_transactions.push({
+        id: 'CSH-' + Date.now().toString().slice(-6),
+        date: new Date().toISOString(),
+        type: 'OUT',
+        category: 'Pembelian Stok Barang',
+        amount: total,
+        ref_id: po_number,
+        description: `Pembelian PO ${po_number} (${supName})`,
+        balance_after: bal - total
+      });
+    } else {
+      db.payables.push({
+        id: 'AP-' + Date.now().toString().slice(-6),
+        purchase_id: purchaseRecord.id,
+        po_number,
+        supplier_id,
+        supplier_name: supName,
+        total_amount: total,
+        paid_amount: paid,
+        remaining_amount: remaining,
+        due_date: purchaseRecord.due_date,
+        status,
+        payment_history: paid > 0 ? [{ date: new Date().toISOString(), amount: paid, note: "DP PO" }] : []
+      });
+      if (paid > 0) {
+        db.cash_transactions.push({
+          id: 'CSH-' + Date.now().toString().slice(-6),
+          date: new Date().toISOString(),
+          type: 'OUT',
+          category: 'Pembayaran Hutang / DP PO',
+          amount: paid,
+          ref_id: po_number,
+          description: `DP PO ${po_number} ke ${supName}`,
+          balance_after: bal - paid
+        });
+      }
+    }
+
+    db.purchases.push(purchaseRecord);
+    saveClientDb(db);
+    return { success: true, message: "Restock PO berhasil dicatat!", data: purchaseRecord };
+  }
+
+  // 10. Cashflow
+  if (path === '/finance/cashflow' && method === 'GET') {
+    return { success: true, currentBalance: clientCalculateCash(db), data: [...db.cash_transactions].reverse() };
+  }
+
+  if (path === '/finance/cashflow' && method === 'POST') {
+    const bal = clientCalculateCash(db);
+    const num = Number(body.amount);
+    const newBal = body.type === 'IN' ? bal + num : bal - num;
+    const entry = {
+      id: 'CSH-' + Date.now().toString().slice(-6),
+      date: new Date().toISOString(),
+      type: body.type,
+      category: body.category || 'Manual',
+      amount: num,
+      ref_id: 'MANUAL',
+      description: body.description || '',
+      balance_after: newBal
+    };
+    db.cash_transactions.push(entry);
+    if (body.type === 'OUT' && (body.category || '').includes('Operasional')) {
+      db.operating_expenses.push({ id: 'EXP-' + Date.now().toString().slice(-6), date: new Date().toISOString(), category: body.category, amount: num, description: body.description });
+    }
+    saveClientDb(db);
+    return { success: true, message: "Kas berhasil dicatat!", data: entry };
+  }
+
+  // 11. Receivables & Payables
+  if (path === '/finance/receivables') return { success: true, data: db.receivables };
+  if (path.includes('/finance/receivables/') && path.endsWith('/pay')) {
+    const id = path.split('/')[3];
+    const rec = db.receivables.find(r => r.id === id);
+    if (rec) {
+      const amt = Number(body.amount);
+      rec.paid_amount += amt;
+      rec.remaining_amount -= amt;
+      if (rec.remaining_amount <= 0) rec.status = 'Lunas';
+      rec.payment_history.push({ date: new Date().toISOString(), amount: amt, note: body.note });
+      const sale = db.sales.find(s => s.id === rec.sale_id || s.invoice_number === rec.invoice_number);
+      if (sale) { sale.paid_amount += amt; sale.remaining_amount = rec.remaining_amount; sale.status = rec.status; }
+      const bal = clientCalculateCash(db);
+      db.cash_transactions.push({ id: 'CSH-' + Date.now().toString().slice(-6), date: new Date().toISOString(), type: 'IN', category: 'Pelunasan Piutang Pelanggan', amount: amt, ref_id: rec.invoice_number, description: `Pelunasan piutang ${rec.invoice_number}`, balance_after: bal + amt });
+      saveClientDb(db);
+      return { success: true, message: "Pembayaran piutang berhasil dicatat!" };
+    }
+  }
+
+  if (path === '/finance/payables') return { success: true, data: db.payables };
+  if (path.includes('/finance/payables/') && path.endsWith('/pay')) {
+    const id = path.split('/')[3];
+    const pay = db.payables.find(p => p.id === id);
+    if (pay) {
+      const amt = Number(body.amount);
+      pay.paid_amount += amt;
+      pay.remaining_amount -= amt;
+      if (pay.remaining_amount <= 0) pay.status = 'Lunas';
+      pay.payment_history.push({ date: new Date().toISOString(), amount: amt, note: body.note });
+      const pur = db.purchases.find(p => p.id === pay.purchase_id || p.po_number === pay.po_number);
+      if (pur) { pur.paid_amount += amt; pur.remaining_amount = pay.remaining_amount; pur.status = pay.status; }
+      const bal = clientCalculateCash(db);
+      db.cash_transactions.push({ id: 'CSH-' + Date.now().toString().slice(-6), date: new Date().toISOString(), type: 'OUT', category: 'Pembayaran Hutang Supplier', amount: amt, ref_id: pay.po_number, description: `Bayar hutang ${pay.po_number}`, balance_after: bal - amt });
+      saveClientDb(db);
+      return { success: true, message: "Pembayaran hutang supplier dicatat!" };
+    }
+  }
+
+  // 12. Income statement
+  if (path === '/finance/income-statement') {
+    const totalPenjualan = db.sales.reduce((a, s) => a + Number(s.total), 0);
+    const totalHpp = db.sales.reduce((a, s) => a + Number(s.hpp_total || 0), 0);
+    const labaKotor = totalPenjualan - totalHpp;
+    const bebanOperasional = db.operating_expenses || [];
+    const totalBeban = bebanOperasional.reduce((a, b) => a + Number(b.amount), 0);
+    return { success: true, data: { totalPenjualan, totalHpp, labaKotor, bebanOperasional, totalBeban, labaBersih: labaKotor - totalBeban } };
+  }
+
+  // 13. Master
+  if (path === '/master/suppliers') return { success: true, data: db.suppliers };
+  if (path === '/master/customers') return { success: true, data: db.customers };
+
+  // 14. Reset
+  if (path === '/reset') {
+    localStorage.setItem('buildpro_erp_db', JSON.stringify(INITIAL_CLIENT_DATA));
+    return { success: true, message: "Database demo di-reset!" };
+  }
+
+  return { success: true, data: null };
+}
+
+// ================= API CALLS (DUAL-MODE: BACKEND API & CLIENT LOCALSTORAGE FALLBACK) ================= //
 async function apiGet(endpoint) {
+  if (isGitHubPages) {
+    return clientDbHandler(endpoint, 'GET');
+  }
   try {
     const res = await fetch(`/api${endpoint}`);
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
     const json = await res.json();
     if (!json.success) throw new Error(json.message);
     return json;
   } catch (err) {
-    showToast(`Error: ${err.message}`, 'danger');
-    return null;
+    // Fallback to client database automatically if backend is unavailable
+    return clientDbHandler(endpoint, 'GET');
   }
 }
 
 async function apiPost(endpoint, body) {
+  if (isGitHubPages) {
+    return clientDbHandler(endpoint, 'POST', body);
+  }
   try {
     const res = await fetch(`/api${endpoint}`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(body)
     });
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
     const json = await res.json();
     if (!json.success) throw new Error(json.message);
     return json;
   } catch (err) {
-    showToast(`Error: ${err.message}`, 'danger');
-    return null;
+    return clientDbHandler(endpoint, 'POST', body);
   }
 }
 
 async function apiPut(endpoint, body) {
+  if (isGitHubPages) {
+    return clientDbHandler(endpoint, 'PUT', body);
+  }
   try {
     const res = await fetch(`/api${endpoint}`, {
       method: 'PUT',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(body)
     });
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
     const json = await res.json();
     if (!json.success) throw new Error(json.message);
     return json;
   } catch (err) {
-    showToast(`Error: ${err.message}`, 'danger');
-    return null;
+    return clientDbHandler(endpoint, 'PUT', body);
   }
 }
 

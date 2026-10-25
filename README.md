@@ -50,7 +50,7 @@
 
 ### Pilihan 1: Link Publik Internet (Bisa dibuka dari HP/Laptop teman & dosen di mana saja):
 Aplikasi saat ini telah dipublikasikan secara online melalui Cloudflare Tunnel:
-👉 **https://prizes-avenue-fabrics-tension.trycloudflare.com**  
+👉 **https://learning-configuring-analyses-teams.trycloudflare.com**  
 *(Siapa saja di internet bisa langsung membuka link ini tanpa perlu instal apa pun).*
 
 ### Pilihan 2: Akses Melalui Jaringan Wi-Fi / Hotspot yang Sama:

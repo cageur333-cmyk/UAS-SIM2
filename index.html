@@ -1,0 +1,1178 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Sistem Informasi ERP Terintegrasi Toko Bangunan & Grosir Bahan Bangunan Berbasis Web dengan Metode Waterfall untuk Tugas UAS">
+  <title>BuildPro ERP - Toko Material & Grosir Bahan Bangunan</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<div class="app-container">
+  
+  <!-- SIDEBAR NAVIGATION -->
+  <aside class="app-sidebar">
+    <div class="sidebar-header">
+      <div class="brand-icon">🏗️</div>
+      <div class="brand-info">
+        <h2>BuildPro ERP</h2>
+        <span>Material & Grosir V1.0</span>
+      </div>
+    </div>
+
+    <nav class="sidebar-nav">
+      <div class="nav-section-title">Menu Utama</div>
+      
+      <a class="nav-item active" data-tab="dashboard" onclick="switchTab('dashboard')" id="navDashboard">
+        <span class="nav-icon">📊</span>
+        <span>Dashboard Eksekutif</span>
+      </a>
+
+      <a class="nav-item" data-tab="inventory" onclick="switchTab('inventory')" id="navInventory">
+        <span class="nav-icon">📦</span>
+        <span>Inventory Material</span>
+      </a>
+
+      <div class="nav-section-title">Transaksi Operasional</div>
+
+      <a class="nav-item" data-tab="pos" onclick="switchTab('pos')" id="navPos">
+        <span class="nav-icon">🛒</span>
+        <span>Kasir POS (Penjualan)</span>
+      </a>
+
+      <a class="nav-item" data-tab="sales-history" onclick="switchTab('sales-history')" id="navSalesHistory">
+        <span class="nav-icon">🧾</span>
+        <span>Riwayat Faktur Jual</span>
+      </a>
+
+      <a class="nav-item" data-tab="purchases" onclick="switchTab('purchases')" id="navPurchases">
+        <span class="nav-icon">📥</span>
+        <span>Pembelian (Restock PO)</span>
+      </a>
+
+      <div class="nav-section-title">Akuntansi & Finansial</div>
+
+      <a class="nav-item" data-tab="finance" onclick="switchTab('finance')" id="navFinance">
+        <span class="nav-icon">💰</span>
+        <span>Buku Kas & Jurnal</span>
+      </a>
+
+      <a class="nav-item" data-tab="ar-ap" onclick="switchTab('ar-ap')" id="navArAp">
+        <span class="nav-icon">📑</span>
+        <span>Hutang & Piutang</span>
+      </a>
+
+      <a class="nav-item" data-tab="profit-loss" onclick="switchTab('profit-loss')" id="navProfitLoss">
+        <span class="nav-icon">📈</span>
+        <span>Laporan Laba Rugi</span>
+      </a>
+
+      <div class="nav-section-title">Akademik & UAS</div>
+
+      <a class="nav-item" data-tab="waterfall" onclick="switchTab('waterfall')" id="navWaterfall">
+        <span class="nav-icon">📘</span>
+        <span>Metode Waterfall SDLC</span>
+      </a>
+    </nav>
+
+    <div class="sidebar-footer">
+      <div>Sistem: <strong>ERP Web-Base</strong></div>
+      <div>Metode: <strong>Waterfall SDLC</strong></div>
+      <button class="btn btn-outline btn-sm" onclick="triggerResetDemo()" style="margin-top:8px; border-color:#334155; color:#94a3b8;" title="Kembalikan database ke sample awal">
+        🔄 Reset Data Demo
+      </button>
+    </div>
+  </aside>
+
+  <!-- MAIN APP CONTAINER -->
+  <main class="app-main">
+    
+    <!-- Topbar -->
+    <header class="app-topbar">
+      <div class="topbar-title">
+        <h1 id="topbarStoreName">TB. Sinar Abadi Material</h1>
+        <p>Sistem ERP Terpadu Persediaan, Transaksi & Arus Kas</p>
+      </div>
+      <div class="topbar-actions">
+        <span class="badge-tag badge-waterfall">
+          🌊 Metode: Waterfall SDLC
+        </span>
+        <span class="badge-tag badge-cash" id="topbarCashBadge">
+          Kas: Memuat...
+        </span>
+      </div>
+    </header>
+
+    <!-- ================= 1. TAB DASHBOARD ================= -->
+    <section class="page-view active" id="view-dashboard">
+      
+      <!-- Critical Stock Alert Banner -->
+      <div class="alert-banner" id="criticalAlertContainer" style="display:none;">
+        <div class="alert-content">
+          <div class="alert-icon">⚠️</div>
+          <div>
+            <div class="alert-title">Peringatan Stok Kritis! (<span id="alertStockCount">0</span> Barang Di Bawah Minimum)</div>
+            <div class="alert-desc" id="alertStockItems">Memuat data...</div>
+          </div>
+        </div>
+        <button class="btn btn-warning btn-sm" onclick="switchTab('purchases')">
+          + Buat PO Restock Sekarang
+        </button>
+      </div>
+
+      <!-- Stats Grid -->
+      <div class="stats-grid">
+        <div class="stat-card">
+          <div class="stat-header">
+            <span class="stat-title">Nilai Aset Stok Material</span>
+            <div class="stat-icon">🧱</div>
+          </div>
+          <div class="stat-value" id="statStockAsset">Rp 0</div>
+          <div class="stat-subtext">Total modal barang di gudang</div>
+        </div>
+
+        <div class="stat-card emerald">
+          <div class="stat-header">
+            <span class="stat-title">Penjualan Hari Ini</span>
+            <div class="stat-icon">🛒</div>
+          </div>
+          <div class="stat-value" id="statTodaySales">Rp 0</div>
+          <div class="stat-subtext">Omset kasir & tempo hari ini</div>
+        </div>
+
+        <div class="stat-card indigo">
+          <div class="stat-header">
+            <span class="stat-title">Saldo Kas Riil Toko</span>
+            <div class="stat-icon">💵</div>
+          </div>
+          <div class="stat-value" id="statCashBalance">Rp 0</div>
+          <div class="stat-subtext">Arus kas tunai siap pakai</div>
+        </div>
+
+        <div class="stat-card amber">
+          <div class="stat-header">
+            <span class="stat-title">Piutang Pelanggan (AR)</span>
+            <div class="stat-icon">📝</div>
+          </div>
+          <div class="stat-value" id="statTotalReceivables">Rp 0</div>
+          <div class="stat-subtext">Tagihan tempo kontraktor</div>
+        </div>
+
+        <div class="stat-card rose">
+          <div class="stat-header">
+            <span class="stat-title">Laba Bersih Kumulatif</span>
+            <div class="stat-icon">📈</div>
+          </div>
+          <div class="stat-value" id="statNetProfit">Rp 0</div>
+          <div class="stat-subtext">Setelah HPP & operasional</div>
+        </div>
+      </div>
+
+      <!-- Dual Column Dashboard -->
+      <div class="dashboard-grid">
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title">
+              <span>📊 Tren Omset 7 Transaksi Terakhir</span>
+            </div>
+            <span class="badge-tag" style="background:#eff6ff; color:#1d4ed8;">Real-time</span>
+          </div>
+          <div id="dashboardChart">
+            <!-- Chart rendered via app.js -->
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title">
+              <span>⚡ Transaksi Penjualan Terkini</span>
+            </div>
+            <button class="btn btn-outline btn-sm" onclick="switchTab('sales-history')">Lihat Semua</button>
+          </div>
+          <div class="table-container">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>No. Faktur</th>
+                  <th>Pelanggan</th>
+                  <th>Tanggal</th>
+                  <th style="text-align:right;">Total</th>
+                </tr>
+              </thead>
+              <tbody id="dashboardRecentSalesTable">
+                <tr><td colspan="4" class="text-center text-muted">Memuat...</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+    </section>
+
+    <!-- ================= 2. TAB INVENTORY ================= -->
+    <section class="page-view" id="view-inventory">
+      <div class="filter-bar">
+        <div class="search-input-wrapper">
+          <span class="search-icon">🔍</span>
+          <input type="text" class="form-control" id="inventorySearch" placeholder="Cari nama bahan material atau kode SKU..." oninput="loadInventory()">
+        </div>
+
+        <div style="display:flex; gap:10px; align-items:center;">
+          <select class="form-control" id="inventoryCategoryFilter" onchange="loadInventory()" style="min-width:170px;">
+            <option value="ALL">Semua Kategori</option>
+          </select>
+
+          <select class="form-control" id="inventoryStatusFilter" onchange="loadInventory()" style="min-width:140px;">
+            <option value="all">Semua Status</option>
+            <option value="low">Stok Menipis / Kritis</option>
+          </select>
+
+          <button class="btn btn-primary" onclick="openAddProductModal()">
+            + Tambah Master Barang
+          </button>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="table-container">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Kode SKU</th>
+                <th>Nama Produk & Lokasi</th>
+                <th>Kategori</th>
+                <th style="text-align:right;">Harga Modal (HPP)</th>
+                <th style="text-align:right;">Harga Jual</th>
+                <th style="text-align:center;">Stok Fisik</th>
+                <th>Status</th>
+                <th>Aksi</th>
+              </tr>
+            </thead>
+            <tbody id="inventoryTableBody">
+              <!-- Loaded via JS -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================= 3. TAB KASIR POS ================= -->
+    <section class="page-view" id="view-pos">
+      <div class="pos-layout">
+        
+        <!-- Left: Product Catalog -->
+        <div class="pos-catalog-panel">
+          <div style="margin-bottom:12px;">
+            <div class="search-input-wrapper">
+              <span class="search-icon">🔍</span>
+              <input type="text" class="form-control" id="posSearchInput" placeholder="Cari barang cepat (Semen, Pasir, Besi, Cat, Pipa...)" oninput="onPosSearch(this.value)">
+            </div>
+          </div>
+
+          <div class="pos-category-tabs" id="posCatTabs">
+            <!-- Tabs rendered via JS -->
+          </div>
+
+          <div class="pos-product-grid" id="posProductGrid">
+            <!-- Product Cards rendered via JS -->
+          </div>
+        </div>
+
+        <!-- Right: Checkout / Cart -->
+        <div class="pos-cart-panel">
+          <div class="pos-cart-header">
+            <div>
+              <h3 style="font-size:15px; font-weight:700;">Keranjang Kasir</h3>
+              <span style="font-size:11px; color:var(--text-muted);">Pilih barang & proses pembayaran</span>
+            </div>
+            <button class="btn btn-outline btn-sm text-danger" onclick="clearCart()">Reset</button>
+          </div>
+
+          <!-- Customer & Payment Type -->
+          <div style="padding:14px 20px 0; border-bottom:1px solid var(--border-color); background:#fafafa;">
+            <div class="form-group" style="margin-bottom:10px;">
+              <label class="form-label">Pelanggan Pembeli:</label>
+              <select class="form-control" id="posCustomerSelect">
+                <!-- Loaded via JS -->
+              </select>
+            </div>
+
+            <div class="form-group" style="margin-bottom:12px;">
+              <label class="form-label">Metode Pembayaran:</label>
+              <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px;">
+                <label style="display:flex; align-items:center; gap:6px; font-size:12px; font-weight:600; cursor:pointer;">
+                  <input type="radio" name="posPayTypeRadio" value="Tunai" checked onchange="onPaymentTypeChange('Tunai')">
+                  Tunai (Cash / Lunas)
+                </label>
+                <label style="display:flex; align-items:center; gap:6px; font-size:12px; font-weight:600; cursor:pointer;">
+                  <input type="radio" name="posPayTypeRadio" value="Tempo/Kredit" onchange="onPaymentTypeChange('Tempo/Kredit')">
+                  Tempo (Kredit/Piutang)
+                </label>
+              </div>
+            </div>
+
+            <div class="form-group" id="posDueDateWrapper" style="display:none; margin-bottom:10px;">
+              <label class="form-label" style="color:#b91c1c;">Jatuh Tempo Piutang:</label>
+              <input type="date" class="form-control" id="posDueDate">
+            </div>
+          </div>
+
+          <!-- Cart Items Scroll -->
+          <div class="pos-cart-items" id="posCartItems">
+            <!-- Rendered via JS -->
+          </div>
+
+          <!-- Cart Summary & Actions -->
+          <div class="pos-cart-summary">
+            <div class="summary-row">
+              <span>Subtotal:</span>
+              <span class="mono font-bold" id="posSubtotalDisplay">Rp 0</span>
+            </div>
+
+            <div class="summary-row" style="align-items:center;">
+              <span>Diskon (Rp):</span>
+              <input type="number" class="form-control" id="posDiscountInput" value="0" min="0" style="width:110px; padding:4px 8px; font-size:12px; text-align:right;" oninput="updateCartSummary(state.cart.reduce((a,c)=>a+c.subtotal,0))">
+            </div>
+
+            <div class="summary-row total-row">
+              <span>Total Tagihan:</span>
+              <span class="mono text-primary" id="posGrandTotalDisplay">Rp 0</span>
+            </div>
+
+            <div class="form-group" style="margin-bottom:8px;">
+              <label class="form-label" id="posPaidAmountLabel">Uang Diterima Kasir:</label>
+              <input type="number" class="form-control mono" id="posPaidAmount" placeholder="Nominal Uang Tunai" oninput="calculatePosPayment()">
+            </div>
+
+            <div class="summary-row" id="posChangeRow">
+              <span style="color:#047857; font-weight:700;">Kembalian Kasir:</span>
+              <span class="mono font-bold" style="color:#047857;" id="posChangeDisplay">Rp 0</span>
+            </div>
+
+            <div class="summary-row" id="posRemainingRow" style="display:none;">
+              <span style="color:#b91c1c; font-weight:700;">Sisa Piutang (Tagihan):</span>
+              <span class="mono font-bold text-danger" id="posRemainingDisplay">Rp 0</span>
+            </div>
+
+            <div class="form-group" style="margin-top:8px; margin-bottom:12px;">
+              <input type="text" class="form-control" id="posNotes" placeholder="Catatan transaksi (opsional, misal: supir pak Joko)">
+            </div>
+
+            <button class="btn btn-primary btn-block" style="padding:12px;" onclick="processCheckout()">
+              💾 Proses Transaksi & Cetak Faktur
+            </button>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ================= 4. TAB RIWAYAT PENJUALAN ================= -->
+    <section class="page-view" id="view-sales-history">
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title">🧾 Riwayat Faktur Penjualan Material</div>
+          <button class="btn btn-primary btn-sm" onclick="switchTab('pos')">+ Buat Transaksi Baru</button>
+        </div>
+        <div class="table-container">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>No. Faktur</th>
+                <th>Waktu Transaksi</th>
+                <th>Nama Pelanggan</th>
+                <th>Metode Bayar</th>
+                <th style="text-align:right;">Total Nilai</th>
+                <th style="text-align:right;">Telah Dibayar</th>
+                <th>Status</th>
+                <th>Aksi</th>
+              </tr>
+            </thead>
+            <tbody id="salesHistoryTableBody">
+              <!-- Loaded via JS -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================= 5. TAB PEMBELIAN (RESTOCK PO) ================= -->
+    <section class="page-view" id="view-purchases">
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title">📥 Form Purchase Order (PO) / Penerimaan Barang Supplier</div>
+          <span class="badge-tag" style="background:#eff6ff; color:#1d4ed8;">ERP Link: Menambah Stok & Mempengaruhi Kas/Hutang</span>
+        </div>
+
+        <form onsubmit="submitPurchaseOrder(event)">
+          <div class="form-row-3">
+            <div class="form-group">
+              <label class="form-label">Pilih Supplier:</label>
+              <select class="form-control" id="poSupplierSelect">
+                <!-- Loaded via JS -->
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">Metode Pembayaran:</label>
+              <select class="form-control" id="poPaymentType">
+                <option value="Tunai">Tunai (Bayar Kas Toko)</option>
+                <option value="Tempo">Tempo (Hutang Dagang Supplier)</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">Jatuh Tempo (Jika Tempo):</label>
+              <input type="date" class="form-control" id="poDueDate">
+            </div>
+          </div>
+
+          <!-- PO Item Selector -->
+          <div style="background:#f8fafc; border:1px solid var(--border-color); border-radius:var(--radius-md); padding:16px; margin-bottom:18px;">
+            <h4 style="font-size:13px; font-weight:700; margin-bottom:12px;">+ Masukkan Barang yang Datang:</h4>
+            <div class="form-row-3" style="align-items:flex-end;">
+              <div class="form-group" style="margin-bottom:0;">
+                <label class="form-label">Pilih Material:</label>
+                <select class="form-control" id="poItemProductSelect" onchange="onPoProductChange()">
+                  <!-- Loaded via JS -->
+                </select>
+              </div>
+
+              <div class="form-group" style="margin-bottom:0;">
+                <label class="form-label">Jumlah Datang (<span id="poItemUnitLabel">Sak</span>):</label>
+                <input type="number" class="form-control" id="poItemQtyInput" value="10" min="1">
+              </div>
+
+              <div class="form-group" style="margin-bottom:0; display:flex; gap:8px;">
+                <div style="flex:1;">
+                  <label class="form-label">Harga Beli Satuan (Rp):</label>
+                  <input type="number" class="form-control mono" id="poItemPriceInput" value="0">
+                </div>
+                <button type="button" class="btn btn-outline" style="align-self:flex-end;" onclick="addPoItemToCart()">
+                  + Tambah ke PO
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- PO Cart Table -->
+          <div class="table-container" style="margin-bottom:18px;">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>Nama Material</th>
+                  <th style="text-align:center;">Qty Masuk</th>
+                  <th style="text-align:right;">Harga Beli Modal</th>
+                  <th style="text-align:right;">Subtotal</th>
+                  <th style="text-align:center;">Aksi</th>
+                </tr>
+              </thead>
+              <tbody id="poCartTableBody">
+                <!-- Loaded via JS -->
+              </tbody>
+            </table>
+          </div>
+
+          <div style="display:flex; justify-content:space-between; align-items:center; background:#f1f5f9; padding:14px 20px; border-radius:var(--radius-md); margin-bottom:18px;">
+            <div>
+              <span style="font-size:12px; color:var(--text-muted);">Uang Muka / DP Dibayar (Jika Tempo):</span>
+              <input type="number" class="form-control mono" id="poPaidAmount" placeholder="0" style="width:200px; display:inline-block; margin-left:10px;">
+            </div>
+            <div>
+              <span style="font-size:14px; font-weight:700;">Total Nilai PO: </span>
+              <span class="mono font-bold text-primary" style="font-size:18px;" id="poGrandTotalDisplay">Rp 0</span>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <input type="text" class="form-control" id="poNotes" placeholder="Catatan PO / Surat Jalan Supplier">
+          </div>
+
+          <button type="submit" class="btn btn-success" style="padding:10px 24px;">
+            📦 Konfirmasi Penerimaan Barang & Update Stok
+          </button>
+        </form>
+      </div>
+
+      <!-- PO History Table -->
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title">📜 Riwayat Penerimaan PO Supplier</div>
+        </div>
+        <div class="table-container">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>No. PO</th>
+                <th>Tanggal</th>
+                <th>Nama Supplier</th>
+                <th>Pembayaran</th>
+                <th style="text-align:right;">Total PO</th>
+                <th style="text-align:right;">Dibayar</th>
+                <th>Status</th>
+                <th>Rincian Barang</th>
+              </tr>
+            </thead>
+            <tbody id="purchasesHistoryTableBody">
+              <!-- Loaded via JS -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================= 6. TAB KEUANGAN & BUKU KAS ================= -->
+    <section class="page-view" id="view-finance">
+      <div class="stats-grid">
+        <div class="stat-card emerald">
+          <div class="stat-header">
+            <span class="stat-title">Saldo Kas Riil Saat Ini</span>
+            <div class="stat-icon">💵</div>
+          </div>
+          <div class="stat-value" id="financeCashBalance">Rp 0</div>
+          <div class="stat-subtext">Total uang di kasir & rekening operasional</div>
+        </div>
+
+        <div class="stat-card">
+          <div class="stat-header">
+            <span class="stat-title">Total Arus Kas Masuk (Inflow)</span>
+            <div class="stat-icon">📥</div>
+          </div>
+          <div class="stat-value" id="financeTotalIn">Rp 0</div>
+          <div class="stat-subtext">Dari penjualan & pelunasan piutang</div>
+        </div>
+
+        <div class="stat-card rose">
+          <div class="stat-header">
+            <span class="stat-title">Total Arus Kas Keluar (Outflow)</span>
+            <div class="stat-icon">📤</div>
+          </div>
+          <div class="stat-value" id="financeTotalOut">Rp 0</div>
+          <div class="stat-subtext">Beli stok, bayar supplier, operasional armada</div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title">📖 Buku Kas & Jurnal Mutasi Keuangan</div>
+          <button class="btn btn-outline btn-sm" onclick="document.getElementById('modalCashEntry').classList.add('active')">
+            + Catat Pengeluaran / Pemasukan Manual
+          </button>
+        </div>
+        <div class="table-container">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Tanggal & Waktu</th>
+                <th>Arus Kas</th>
+                <th>Kategori Jurnal</th>
+                <th>No. Referensi</th>
+                <th>Deskripsi Transaksi</th>
+                <th style="text-align:right;">Nominal (Rp)</th>
+                <th style="text-align:right;">Saldo Akhir</th>
+              </tr>
+            </thead>
+            <tbody id="cashflowTableBody">
+              <!-- Loaded via JS -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================= 7. TAB HUTANG & PIUTANG ================= -->
+    <section class="page-view" id="view-ar-ap">
+      <!-- Piutang Pelanggan -->
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title">📝 Piutang Pelanggan & Kontraktor (Accounts Receivable)</div>
+          <span class="badge-tag" style="background:#fef2f2; color:#991b1b;">Tagihan Tempo Penjualan</span>
+        </div>
+        <div class="table-container">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>No. Faktur</th>
+                <th>Pelanggan / Kontraktor</th>
+                <th style="text-align:right;">Total Tagihan</th>
+                <th style="text-align:right;">Sudah Dibayar</th>
+                <th style="text-align:right;">Sisa Piutang</th>
+                <th>Jatuh Tempo</th>
+                <th>Status</th>
+                <th>Aksi</th>
+              </tr>
+            </thead>
+            <tbody id="arTableBody">
+              <!-- Loaded via JS -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Hutang Supplier -->
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title">🚚 Hutang Dagang ke Supplier (Accounts Payable)</div>
+          <span class="badge-tag" style="background:#fffbeb; color:#92400e;">Kewajiban Pembayaran Restock</span>
+        </div>
+        <div class="table-container">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>No. PO</th>
+                <th>Nama Supplier</th>
+                <th style="text-align:right;">Total Tagihan</th>
+                <th style="text-align:right;">Sudah Dibayar</th>
+                <th style="text-align:right;">Sisa Hutang</th>
+                <th>Jatuh Tempo</th>
+                <th>Status</th>
+                <th>Aksi</th>
+              </tr>
+            </thead>
+            <tbody id="apTableBody">
+              <!-- Loaded via JS -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================= 8. TAB LABA RUGI ================= -->
+    <section class="page-view" id="view-profit-loss">
+      <div class="card" style="max-width:850px; margin:0 auto 24px;">
+        <div class="card-header">
+          <div class="card-title">📈 Laporan Laba Rugi Resmi (Income Statement)</div>
+          <button class="btn btn-outline btn-sm" onclick="window.print()">🖨️ Cetak Laporan</button>
+        </div>
+
+        <div style="background:#ffffff; padding:20px; border-radius:var(--radius-md);">
+          <table style="width:100%; border-collapse:collapse; font-size:14px;">
+            <tbody>
+              <tr style="border-bottom:1px solid #e2e8f0;">
+                <td style="padding:12px 0; font-weight:700;">1. Total Penjualan Bersih (Revenue)</td>
+                <td style="padding:12px 0; text-align:right;" class="mono font-bold text-primary" id="plTotalSales">Rp 0</td>
+              </tr>
+              <tr style="border-bottom:1px solid #e2e8f0;">
+                <td style="padding:12px 0; color:#b91c1c;">2. Harga Pokok Penjualan (HPP / Modal Barang Terjual)</td>
+                <td style="padding:12px 0; text-align:right; color:#b91c1c;" class="mono font-bold" id="plTotalHpp">- Rp 0</td>
+              </tr>
+              <tr style="border-bottom:2px solid #0f172a; background:#f8fafc;">
+                <td style="padding:12px 10px; font-weight:800; font-size:15px;">Laba Kotor (Gross Profit)</td>
+                <td style="padding:12px 10px; text-align:right; font-size:16px;" class="mono font-bold text-success" id="plGrossProfit">Rp 0</td>
+              </tr>
+              <tr style="border-bottom:1px solid #e2e8f0;">
+                <td style="padding:12px 0; color:#b91c1c;">3. Beban & Biaya Operasional Toko</td>
+                <td style="padding:12px 0; text-align:right; color:#b91c1c;" class="mono font-bold" id="plTotalExpenses">- Rp 0</td>
+              </tr>
+              <tr style="background:#ecfdf5; border-top:2px solid #10b981;">
+                <td style="padding:16px 10px; font-weight:800; font-size:17px; color:#065f46;">LABA BERSIH USAHA (Net Profit)</td>
+                <td style="padding:16px 10px; text-align:right; font-size:20px; color:#065f46;" class="mono font-bold" id="plNetProfit">Rp 0</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="card" style="max-width:850px; margin:0 auto;">
+        <div class="card-header">
+          <div class="card-title">Rincian Beban Operasional Toko</div>
+        </div>
+        <div class="table-container">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Tanggal</th>
+                <th>Kategori Beban</th>
+                <th>Keterangan</th>
+                <th style="text-align:right;">Nominal (Rp)</th>
+              </tr>
+            </thead>
+            <tbody id="plExpensesTableBody">
+              <!-- Loaded via JS -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================= 9. TAB METODE WATERFALL & UAS ================= -->
+    <section class="page-view" id="view-waterfall">
+      <div class="waterfall-doc-card">
+        <div style="display:flex; justify-content:space-between; align-items:flex-start;">
+          <div>
+            <span class="waterfall-phase-tag">Dokumentasi Rekayasa Perangkat Lunak</span>
+            <h2 style="font-size:22px; font-weight:800; color:#0f172a; margin-bottom:8px;">
+              Penerapan Metode Waterfall pada Pengembangan Sistem ERP Toko Bangunan
+            </h2>
+            <p style="color:#64748b; font-size:13px; max-width:800px;">
+              Dokumentasi ini disusun secara terstruktur berdasarkan 5 tahap siklus hidup perangkat lunak klasik (Waterfall SDLC) sesuai standar tugas mata kuliah Analisis & Perancangan Sistem / Rekayasa Perangkat Lunak.
+            </p>
+          </div>
+          <button class="btn btn-outline" onclick="window.print()">🖨️ Cetak Dokumen UAS</button>
+        </div>
+
+        <hr style="border:none; border-top:1px solid #e2e8f0; margin:24px 0;">
+
+        <!-- FASE 1 -->
+        <div style="margin-bottom:32px;">
+          <span class="waterfall-phase-tag">Fase 1: Requirements Analysis</span>
+          <h3 class="waterfall-step-header">1. Analisis Kebutuhan Sistem (Software Requirements)</h3>
+          <p class="waterfall-step-desc">
+            Mengidentifikasi seluruh kebutuhan fungsional dan aktor yang terlibat pada proses bisnis toko bahan bangunan:
+          </p>
+          <div style="display:grid; grid-template-columns:1fr 1fr; gap:20px;">
+            <div style="background:#f8fafc; padding:18px; border-radius:var(--radius-md); border:1px solid #e2e8f0;">
+              <h4 style="font-size:14px; font-weight:700; margin-bottom:10px; color:#1d4ed8;">Kebutuhan Fungsional (Functional Requirements)</h4>
+              <ul style="padding-left:18px; font-size:13px; color:#334155; display:flex; flex-direction:column; gap:6px;">
+                <li><strong>FR-01:</strong> Sistem mengelola master data produk material lengkap dengan satuan (sak, truk, batang, dus) dan safety stock alert.</li>
+                <li><strong>FR-02:</strong> Sistem memproses transaksi kasir POS (tunai & tempo/kredit) yang otomatis memotong stok barang.</li>
+                <li><strong>FR-03:</strong> Sistem mencatat Purchase Order (PO) pembelian supplier yang otomatis menambah stok fisik di gudang.</li>
+                <li><strong>FR-04:</strong> Sistem mengelola buku kas real-time (debet/kredit) yang terhubung ke setiap transaksi penjualan dan pembelian.</li>
+                <li><strong>FR-05:</strong> Sistem memantau dan mencatat pelunasan piutang pelanggan (AR) dan hutang supplier (AP).</li>
+                <li><strong>FR-06:</strong> Sistem mengkalkulasi Harga Pokok Penjualan (HPP) dan menyajikan Laporan Laba Rugi resmi.</li>
+              </ul>
+            </div>
+
+            <div style="background:#f8fafc; padding:18px; border-radius:var(--radius-md); border:1px solid #e2e8f0;">
+              <h4 style="font-size:14px; font-weight:700; margin-bottom:10px; color:#1d4ed8;">Aktor & Peran Pengguna (Actors)</h4>
+              <ul style="padding-left:18px; font-size:13px; color:#334155; display:flex; flex-direction:column; gap:6px;">
+                <li><strong>1. Kasir:</strong> Melayani transaksi penjualan toko, mencetak faktur/struk, menerima uang tunai/DP.</li>
+                <li><strong>2. Bagian Gudang:</strong> Memantau stok opname, menerima barang restock PO supplier, mutasi kartu stok.</li>
+                <li><strong>3. Bagian Keuangan:</strong> Mengelola arus kas, mencatat pelunasan piutang kontraktor & hutang distributor.</li>
+                <li><strong>4. Pemilik / Manajer (Owner):</strong> Memantau dashboard KPI, evaluasi profitabilitas dan laporan laba rugi.</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+
+        <!-- FASE 2 -->
+        <div style="margin-bottom:32px;">
+          <span class="waterfall-phase-tag">Fase 2: System Design</span>
+          <h3 class="waterfall-step-header">2. Desain Arsitektur & Relasi Database (ERD & DFD)</h3>
+          <p class="waterfall-step-desc">
+            Merancang struktur basis data relasional terintegrasi ERP dan aliran data (DFD) antar-entitas:
+          </p>
+
+          <h4 style="font-size:13px; font-weight:700; color:#334155; margin-bottom:6px;">Entity Relationship Diagram (ERD Terintegrasi ERP):</h4>
+          <div class="diagram-box">
++---------------+         +---------------+         +-------------------+
+|   SUPPLIERS   | 1     * |   PURCHASES   | 1     * |  PURCHASE_ITEMS   |
+| (Pabrik Semen)|<--------|   (Restock)   |-------->| (Qty, Beli, Part) |
++---------------+         +---------------+         +-------------------+
+                                  | 1                       | *
+                                  v *                       v 1
++---------------+         +---------------+         +-------------------+
+|  PAYABLES(AP) |         | CASH_JOURNAL  |         |     PRODUCTS      |
+| (Hutang Supl) |         | (Arus Kas Toko|         | (Katalog Material)|
++---------------+         +---------------+         +-------------------+
+                                  ^ *                       ^ 1
+                                  | 1                       | *
++---------------+         +---------------+         +-------------------+
+|RECEIVABLES(AR)| 1     * |     SALES     | 1     * |    SALE_ITEMS     |
+| (Piutang Kntr)|<--------|  (Faktur POS) |-------->| (Qty, Jual, HPP)  |
++---------------+         +---------------+         +-------------------+
+                                  ^ *
+                                  | 1
+                          +---------------+
+                          |   CUSTOMERS   |
+                          | (Kontraktor)  |
+                          +---------------+</div>
+
+          <h4 style="font-size:13px; font-weight:700; color:#334155; margin:16px 0 6px;">Data Flow Diagram (DFD Level 0 / Context Diagram):</h4>
+          <div class="diagram-box">
+  [ Pelanggan / Kontraktor ]
+        |  1. Pesanan Barang & Uang Pembayaran (Tunai/DP)
+        v
++-------------------------------------------------------------+
+|                                                             |
+|           SISTEM ERP TOKO MATERIAL BANGUNAN (WEB)           |
+|                                                             |
++-------------------------------------------------------------+
+        ^
+        |  2. Faktur Pembelian (PO) & Pembayaran Hutang
+  [ Supplier Material ]</div>
+        </div>
+
+        <!-- FASE 3 -->
+        <div style="margin-bottom:32px;">
+          <span class="waterfall-phase-tag">Fase 3: Implementation</span>
+          <h3 class="waterfall-step-header">3. Implementasi Sistem (Coding & Tech Stack)</h3>
+          <p class="waterfall-step-desc">
+            Sistem diimplementasikan menggunakan arsitektur web modern yang ringan, cepat, dan mandiri tanpa dependensi rumit:
+          </p>
+          <div style="background:#f8fafc; padding:18px; border-radius:var(--radius-md); border:1px solid #e2e8f0; font-size:13px;">
+            <p><strong>• Backend:</strong> Node.js & Express.js dengan REST API Endpoint modular.</p>
+            <p><strong>• Frontend:</strong> Semantic HTML5, Vanilla JavaScript (ES6+ modular state management), dan Vanilla CSS Design System kustom.</p>
+            <p><strong>• Database Storage:</strong> Persistent JSON Storage dengan struktur relasional ACID-like atomic transactional writing.</p>
+            <p><strong>• Interkoneksi ERP:</strong> Setiap transaksi penjualan (`POST /api/sales`) langsung memotong `products.stock`, mencatat `stock_movements`, dan memasukkan pendapatan ke `cash_transactions` serta `receivables` jika kredit.</p>
+          </div>
+        </div>
+
+        <!-- FASE 4 -->
+        <div style="margin-bottom:32px;">
+          <span class="waterfall-phase-tag">Fase 4: Testing & Verification</span>
+          <h3 class="waterfall-step-header">4. Pengujian Sistem (Black Box Testing)</h3>
+          <p class="waterfall-step-desc">
+            Tabel hasil pengujian fungsionalitas sistem ERP menggunakan metode Black Box:
+          </p>
+          <div class="table-container">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>Test ID</th>
+                  <th>Skenario Uji</th>
+                  <th>Input Data</th>
+                  <th>Ekspektasi Sistem</th>
+                  <th>Hasil Aktual</th>
+                  <th>Status</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td class="mono font-bold">TC-01</td>
+                  <td>Penjualan POS Tunai</td>
+                  <td>15 Sak Semen, Uang Tunai Cukup</td>
+                  <td>Stok berkurang 15, kas toko bertambah, struk tercetak</td>
+                  <td>Stok terpotong, saldo kas bertambah real-time</td>
+                  <td><span class="status-pill success">PASS (Valid)</span></td>
+                </tr>
+                <tr>
+                  <td class="mono font-bold">TC-02</td>
+                  <td>Penjualan POS Tempo (Kredit)</td>
+                  <td>Kontraktor, Bayar DP Sebagian</td>
+                  <td>Stok terpotong, tercatat piutang baru (AR), kas bertambah seharga DP</td>
+                  <td>Piutang muncul di tab AR, status Belum Lunas</td>
+                  <td><span class="status-pill success">PASS (Valid)</span></td>
+                </tr>
+                <tr>
+                  <td class="mono font-bold">TC-03</td>
+                  <td>Validasi Stok Habis</td>
+                  <td>Beli barang melebihi stok yang ada</td>
+                  <td>Sistem menolak dan menampilkan peringatan stok tidak cukup</td>
+                  <td>Peringatan error muncul, keranjang tidak dapat checkout</td>
+                  <td><span class="status-pill success">PASS (Valid)</span></td>
+                </tr>
+                <tr>
+                  <td class="mono font-bold">TC-04</td>
+                  <td>Penerimaan Barang PO Restock</td>
+                  <td>Restock 100 Sak Semen dari Supplier</td>
+                  <td>Stok gudang bertambah 100, kartu stok tercatat</td>
+                  <td>Stok produk otomatis naik, mutasi IN terekam</td>
+                  <td><span class="status-pill success">PASS (Valid)</span></td>
+                </tr>
+                <tr>
+                  <td class="mono font-bold">TC-05</td>
+                  <td>Pelunasan Piutang Pelanggan</td>
+                  <td>Input nominal cicilan piutang di modal AR</td>
+                  <td>Sisa piutang berkurang, uang masuk dicatat ke buku kas</td>
+                  <td>Status piutang terupdate, saldo kas bertambah</td>
+                  <td><span class="status-pill success">PASS (Valid)</span></td>
+                </tr>
+                <tr>
+                  <td class="mono font-bold">TC-06</td>
+                  <td>Stock Opname Fisik</td>
+                  <td>Ubah stok fisik barang via modal opname</td>
+                  <td>Stok sistem disesuaikan, mutasi ADJUST tercatat</td>
+                  <td>Stok terupdate dengan catatan selisih opname</td>
+                  <td><span class="status-pill success">PASS (Valid)</span></td>
+                </tr>
+                <tr>
+                  <td class="mono font-bold">TC-07</td>
+                  <td>Kalkulasi Laba Rugi</td>
+                  <td>Lihat halaman Income Statement</td>
+                  <td>HPP terhitung otomatis: Penjualan - HPP - Beban = Laba Bersih</td>
+                  <td>Kalkulasi laba kotor dan laba bersih tepat</td>
+                  <td><span class="status-pill success">PASS (Valid)</span></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- FASE 5 -->
+        <div>
+          <span class="waterfall-phase-tag">Fase 5: Maintenance & Deployment</span>
+          <h3 class="waterfall-step-header">5. Pemeliharaan & Prosedur Deployment</h3>
+          <p class="waterfall-step-desc">
+            Sistem dapat dijalankan secara lokal (localhost) untuk pengujian dosen, maupun di-deploy ke cloud VPS (Ubuntu/Nginx/Node.js) atau platform seperti Railway/Vercel/Render.
+          </p>
+        </div>
+
+      </div>
+    </section>
+
+  </main>
+</div>
+
+<!-- ================= MODALS ================= -->
+
+<!-- Modal Master Product (Add/Edit) -->
+<div class="modal-overlay" id="modalProduct">
+  <div class="modal-container">
+    <div class="modal-header">
+      <h3 id="modalProductTitle">Tambah Master Barang Material</h3>
+      <button class="modal-close" onclick="closeModal('modalProduct')">&times;</button>
+    </div>
+    <form onsubmit="saveProductForm(event)">
+      <div class="modal-body">
+        <input type="hidden" id="prodId">
+        
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">Kode SKU / Barcode:</label>
+            <input type="text" class="form-control mono" id="prodCode" required placeholder="Contoh: SMN-TR-50">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Kategori Material:</label>
+            <select class="form-control" id="prodCategory">
+              <!-- Loaded via JS -->
+            </select>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Nama Barang Material:</label>
+          <input type="text" class="form-control" id="prodName" required placeholder="Contoh: Semen Tiga Roda Portland 50 Kg">
+        </div>
+
+        <div class="form-row-3">
+          <div class="form-group">
+            <label class="form-label">Satuan:</label>
+            <input type="text" class="form-control" id="prodUnit" required placeholder="Sak / Batang / Dus / Truk">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Harga Modal Beli (Rp):</label>
+            <input type="number" class="form-control mono" id="prodPurchasePrice" required placeholder="64000">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Harga Jual Toko (Rp):</label>
+            <input type="number" class="form-control mono" id="prodSellingPrice" required placeholder="72000">
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group" id="prodStockWrapper">
+            <label class="form-label">Stok Awal Fisik:</label>
+            <input type="number" class="form-control" id="prodStock" value="0">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Batas Minimum (Alert Stok):</label>
+            <input type="number" class="form-control" id="prodMinStock" value="10">
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">Lokasi Rak / Gudang:</label>
+            <input type="text" class="form-control" id="prodLocation" placeholder="Contoh: Gudang A-1">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Supplier Utama:</label>
+            <select class="form-control" id="prodSupplier">
+              <!-- Loaded via JS -->
+            </select>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-outline" onclick="closeModal('modalProduct')">Batal</button>
+        <button type="submit" class="btn btn-primary">Simpan Data Barang</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- Modal Stock Opname Fisik -->
+<div class="modal-overlay" id="modalOpname">
+  <div class="modal-container">
+    <div class="modal-header">
+      <h3>📋 Penyesuaian Stok Opname Fisik</h3>
+      <button class="modal-close" onclick="closeModal('modalOpname')">&times;</button>
+    </div>
+    <form onsubmit="submitOpnameForm(event)">
+      <div class="modal-body">
+        <input type="hidden" id="opnameProdId">
+        <p style="margin-bottom:14px;">Barang: <strong id="opnameProdName">-</strong></p>
+        <p style="margin-bottom:14px;">Stok Sistem Saat Ini: <span class="badge-tag" id="opnameSystemStock">0</span></p>
+
+        <div class="form-group">
+          <label class="form-label">Hasil Perhitungan Fisik Riil di Gudang:</label>
+          <input type="number" class="form-control mono" id="opnameActualStock" required style="font-size:16px;">
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Alasan / Catatan Penyesuaian:</label>
+          <textarea class="form-control" id="opnameNotes" rows="2" placeholder="Contoh: Selisih penghitungan akhir bulan, ada sak pecah atau barang basah."></textarea>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-outline" onclick="closeModal('modalOpname')">Batal</button>
+        <button type="submit" class="btn btn-warning">Simpan Hasil Opname</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- Modal Kartu Stok -->
+<div class="modal-overlay" id="modalKartuStok">
+  <div class="modal-container large">
+    <div class="modal-header">
+      <h3>📜 Kartu Mutasi Stok: <span id="kartuStokProdName">-</span></h3>
+      <button class="modal-close" onclick="closeModal('modalKartuStok')">&times;</button>
+    </div>
+    <div class="modal-body">
+      <div class="table-container">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Waktu</th>
+              <th>No. Referensi</th>
+              <th>Tipe Mutasi</th>
+              <th style="text-align:right;">Perubahan</th>
+              <th style="text-align:right;">Stok Akhir</th>
+              <th>Keterangan</th>
+            </tr>
+          </thead>
+          <tbody id="kartuStokTableBody">
+            <!-- Loaded via JS -->
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button type="button" class="btn btn-outline" onclick="closeModal('modalKartuStok')">Tutup</button>
+    </div>
+  </div>
+</div>
+
+<!-- Modal Cetak Faktur Penjualan -->
+<div class="modal-overlay" id="modalInvoice">
+  <div class="modal-container large">
+    <div class="modal-header no-print">
+      <h3>🖨️ Faktur Penjualan Resmi Toko Bangunan</h3>
+      <button class="modal-close" onclick="closeModal('modalInvoice')">&times;</button>
+    </div>
+    <div class="modal-body" id="invoicePrintContainer">
+      <!-- Generated via JS -->
+    </div>
+    <div class="modal-footer no-print">
+      <button type="button" class="btn btn-outline" onclick="closeModal('modalInvoice')">Tutup</button>
+      <button type="button" class="btn btn-primary" onclick="window.print()">Cetak Faktur Sekarang</button>
+    </div>
+  </div>
+</div>
+
+<!-- Modal Catat Kas Manual -->
+<div class="modal-overlay" id="modalCashEntry">
+  <div class="modal-container">
+    <div class="modal-header">
+      <h3>💰 Catat Transaksi Kas Manual</h3>
+      <button class="modal-close" onclick="closeModal('modalCashEntry')">&times;</button>
+    </div>
+    <form onsubmit="submitCashEntry(event)">
+      <div class="modal-body">
+        <div class="form-group">
+          <label class="form-label">Jenis Arus Kas:</label>
+          <select class="form-control" id="cashEntryType">
+            <option value="OUT">Uang Keluar (-) / Biaya Beban</option>
+            <option value="IN">Uang Masuk (+) / Pendapatan Lain</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Kategori Transaksi:</label>
+          <select class="form-control" id="cashEntryCategory">
+            <option value="Biaya Operasional Bensin & Armada">Biaya Operasional Bensin & Armada Truk</option>
+            <option value="Biaya Gaji & Bongkar Muat Kuli">Biaya Gaji & Bongkar Muat Kuli</option>
+            <option value="Biaya Listrik, Air & Internet Toko">Biaya Listrik, Air & Internet Toko</option>
+            <option value="Biaya Perawatan Kendaraan & Alat">Biaya Perawatan Kendaraan & Alat</option>
+            <option value="Pendapatan Sewa Alat / Lainnya">Pendapatan Sewa Alat / Lainnya</option>
+            <option value="Lain-lain">Lain-lain</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Nominal (Rp):</label>
+          <input type="number" class="form-control mono" id="cashEntryAmount" required placeholder="500000">
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Keterangan Tambahan:</label>
+          <input type="text" class="form-control" id="cashEntryDesc" placeholder="Contoh: Pembelian bensin solar armada engkel kirim bata">
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-outline" onclick="closeModal('modalCashEntry')">Batal</button>
+        <button type="submit" class="btn btn-primary">Simpan ke Buku Kas</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- Modal Bayar Cicilan Piutang (AR) -->
+<div class="modal-overlay" id="modalPayAr">
+  <div class="modal-container">
+    <div class="modal-header">
+      <h3 id="payArTitle">Pembayaran Piutang Pelanggan</h3>
+      <button class="modal-close" onclick="closeModal('modalPayAr')">&times;</button>
+    </div>
+    <form onsubmit="submitPayAr(event)">
+      <div class="modal-body">
+        <input type="hidden" id="payArId">
+        <p style="margin-bottom:12px;">Sisa Piutang yang Harus Dibayar: <strong id="payArRemainingDisplay" class="mono text-danger">Rp 0</strong></p>
+
+        <div class="form-group">
+          <label class="form-label">Nominal yang Dibayarkan (Rp):</label>
+          <input type="number" class="form-control mono" id="payArAmount" required>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Catatan Pembayaran:</label>
+          <input type="text" class="form-control" id="payArNote" placeholder="Contoh: Transfer Bank BCA / Tunai kasir">
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-outline" onclick="closeModal('modalPayAr')">Batal</button>
+        <button type="submit" class="btn btn-primary">Konfirmasi Uang Masuk Kas</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- Modal Bayar Hutang Supplier (AP) -->
+<div class="modal-overlay" id="modalPayAp">
+  <div class="modal-container">
+    <div class="modal-header">
+      <h3 id="payApTitle">Pembayaran Hutang ke Supplier</h3>
+      <button class="modal-close" onclick="closeModal('modalPayAp')">&times;</button>
+    </div>
+    <form onsubmit="submitPayAp(event)">
+      <div class="modal-body">
+        <input type="hidden" id="payApId">
+        <p style="margin-bottom:12px;">Sisa Hutang ke Pabrik/Supplier: <strong id="payApRemainingDisplay" class="mono text-danger">Rp 0</strong></p>
+
+        <div class="form-group">
+          <label class="form-label">Nominal yang Dibayarkan (Rp):</label>
+          <input type="number" class="form-control mono" id="payApAmount" required>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Catatan Pembayaran:</label>
+          <input type="text" class="form-control" id="payApNote" placeholder="Contoh: Giro jatuh tempo / Transfer Rekening PT Semen">
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-outline" onclick="closeModal('modalPayAp')">Batal</button>
+        <button type="submit" class="btn btn-warning">Konfirmasi Uang Keluar Kas</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- Toast Container -->
+<div class="toast-container" id="toastContainer"></div>
+
+<script src="js/app.js"></script>
+</body>
+</html>
